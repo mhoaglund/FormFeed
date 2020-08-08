@@ -1,0 +1,14 @@
+{
+    "appconfig":{
+        "blobaccount":"formfeeddata",
+        "blobcontainer":"formfeedblob",
+        "tablecontainer":"formfeedtable",
+        "partkey":"message",
+        "maxentities":100,
+        "dbconfig":{
+            "host":"",
+            "port":"",
+            "dbname":""
+        }
+    }
+}

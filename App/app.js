@@ -4,7 +4,7 @@ var http = require('http').createServer(app);
 var io = require('socket.io')(http);
 var path = require('path');
 //const asHandler = require('azureServiceHandler.js');
-const asHandler = require(__dirname + '\\azureServiceHandler.js')
+const asHandler = require(__dirname + '/azureServiceHandler.js')
 
 app.use(express.static(path.join(__dirname, 'public')));
 

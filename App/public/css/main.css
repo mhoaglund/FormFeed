@@ -60,6 +60,10 @@ div{
     padding-bottom: 0.5rem;
 }
 
+.showpanel > div{
+    justify-content: flex-end;
+}
+
 .editpanel>div a,
 .showpanel>div a{
     display: block;

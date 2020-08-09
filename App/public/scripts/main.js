@@ -13,8 +13,12 @@ $(function () {
     //     $('#m').val('');
     //     return false;
     // });
-    socket.on('chat message', function (msg) {
-        $('#messages').append($('<li>').text(msg));
+    socket.on('create_message', function (msg) {
+        if($('#'+msg.id).length){
+            console.log("Already have this one somehow.");
+            return;
+        }
+        createMessageAtLocation(msg);
     });
 
     $(document).on("click", '#ground', function (e) {
@@ -91,6 +95,28 @@ function startMessageAtLocation(e){
     refreshDraggables();
     //Future enhancement: emit event to create placeholder element 
     startEditing($('#'+msgid));
+}
+
+function createMessageAtLocation(msg){
+    var html = '<div class="message" id="' +
+        msg.id + '" style="left:' +
+        msg.location.x + '; top:' +
+        msg.location.y + '">' +
+        '<div class="editpanel"><textarea></textarea><div><a id="submitlink">Submit</a><a id="discardlink">Discard</a></div></div>' +
+        '<div class="showpanel"><p class="msgbody">' + msg.body + '</p><div><a id="editlink">Edit</a></div></div>' +
+        '</div>';
+    $('#ground').append(html);
+    // $('#'+msg.id + ' .editpanel textarea').css({
+    //     'height': msg.size.y + 'px',
+    //     'width': msg.size.x + 'px'
+    // });
+    $('#' + msg.id + ' .editpanel textarea').width(msg.size.wd).height(msg.size.ht);
+    $('#' + msg.id + ' .showpanel p.msgbody').width(msg.size.wd).height(msg.size.ht);
+    // $('#' + msg.id + ' .showpanel p.msgbody').css({
+    //     'height': msg.size.y + 'px',
+    //     'width': msg.size.x + 'px'
+    // });
+    $('#' + msg.id + ' .editpanel textarea').val(msg.body);
 }
 
 function clearUnsubmitted(){
@@ -177,11 +203,13 @@ function finishEditing(_id, discard = null) {
     }
     copyBody(_id);
     var message = getMessage(_id);
-
-    $(id).removeClass('unsubmitted');
+    if($(id).hasClass('unsubmitted')){
+        $(id).removeClass('unsubmitted');
+        socket.emit('submit', message);
+    } else {
+        socket.emit('update', message);
+    }
     $(id).removeClass('editing');
-    
-    socket.emit('update', message);
     cacheOwnedMessage(message);
 }
 

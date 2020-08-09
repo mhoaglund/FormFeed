@@ -18,13 +18,45 @@ function newRowKey(){
     return invertedTicks;
 }
 
+module.exports.Import = function(_payload, _cb){
+    // var msg = {
+    //     id: id,
+    //     body: $('#' + id).find('textarea').val(),
+    //     location: _loc,
+    //     size: _size
+    // }
+    var now_utc = Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate(),
+        date.getUTCHours(), date.getUTCMinutes(), date.getUTCSeconds());
+    var _row = {
+        PartitionKey: entGen.String(config.get('appconfig.partkey')),
+        RowKey: entGen.String(invertedTicks),
+        uploaded: entGen.DateTime(new Date(now_utc)),
+        ident: entGen.String(_payload.id),
+        body: entGen.String(_payload.body),
+        location: entGen.String(JSON.stringify(_payload.loc)),
+        size: entGen.String(JSON.stringify(_payload.size))
+    }
+}
+
+module.exports.Update = function(_payload, _cb){
+    tableService.replaceEntity(config.get('appconfig.tablecontainer'), _inputrow, function (error, result, response) {
+        if (!error) {
+            console.log(result)
+            callback(true);
+        } else {
+            console.log(error)
+            callback(false);
+        }
+    });
+}
+
 //Continuation token stuff: https://coderead.wordpress.com/2012/08/20/handling-continuation-tokens-with-node-js-on-windows-azure-table-storage/
 module.exports.getEntities = function (_clienttoken = null, _cb) {
     var query = new azure.TableQuery()
         .top(config.get('appconfig.maxentities'))
         .where('PartitionKey eq ?', config.get('appconfig.partkey'));
 
-    tableService.queryEntities(config.get('appconfig.tablecontainer'), query, _clienttoken, function (error, result, response) {
+    tableService.queryEntities(config.get('appconfig.tablecontainer'), query, _clienttoken,{payloadFormat:"application/json;odata=nometadata"}, function (error, result, response) {
         if (!error) {
             // result.entries contains entities matching the query
             if (result.continuationToken) {

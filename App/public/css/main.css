@@ -1,9 +1,25 @@
-#ground{
-    width: 300vw;
-    height: 300vw;
-    background: blue;
+html,body{
+    font-size: 12px;
+    font-family: 'Courier New', Courier, monospace;
 }
 
+a{
+    cursor: pointer;
+}
+
+a, p, textarea{
+    font-family: 'Courier New',Courier,monospace;
+}
+
+#ground{
+    width: 3000px;
+    height: 3000px;
+    background: gainsboro;
+}
+
+div{
+    box-sizing: border-box;
+}
 .message{
     position: absolute;
     top: 0;
@@ -32,4 +48,23 @@
     position: absolute;
     top: 0;
     left: 0;
+}
+
+.editpanel > div,
+.showpanel > div{
+    display: flex;
+    flex-flow: row;
+    align-content: space-between;
+    justify-content: space-between;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+}
+
+.editpanel>div a,
+.showpanel>div a{
+    display: block;
+    padding: 0.5rem;
+    background-color: gainsboro;
+    border: 1px solid gray;
+    border-radius: 5px;
 }

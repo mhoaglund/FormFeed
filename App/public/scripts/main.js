@@ -1,5 +1,7 @@
+var socket = io();
+
 $(function () {
-    var socket = io();
+    
 
     $(window).resize(function () {
         setOalls();
@@ -23,9 +25,29 @@ $(function () {
         e.stopPropagation();
     });
 
+    $(document).on("click", '#editlink', function (e) {
+        e.stopPropagation();
+        var msgparent = $(this).parents('.message');
+        if (msgparent) {
+            startEditing(msgparent);
+        }
+    });
+
+    $(document).on("click", '#discardlink', function (e) {
+        e.stopPropagation();
+        var msgparent = $(this).parents('.message');
+        if (msgparent) {
+            discardChanges(msgparent.attr('id'));
+        }
+    });
+
     $(document).on("click", '#submitlink', function (e) {
         e.stopPropagation();
         //TODO locate message parent and get id value to finish editing
+        var msgparent = $(this).parents('.message');
+        if(msgparent){
+            finishEditing(msgparent.attr('id'));
+        }
     });
 
     setOalls();
@@ -54,20 +76,25 @@ myMessages = []
 
 //Update the view with a new message stub+textarea, send message to server to emit
 function startMessageAtLocation(e){
+    clearUnsubmitted();
     var msgid = uuidv4();
-    alert(e.pageX + ' , ' + e.pageY);
-    var loc = determineRelLocation({x: e.pageX, y: e.pageY});
-    var html = '<div class="message" id="'
+    //alert(e.pageX + ' , ' + e.pageY);
+    //var loc = determineRelLocation({x: e.pageX, y: e.pageY});
+    var html = '<div class="message unsubmitted" id="'
      + msgid + '" style="left:' 
-     + loc.x + 'vw; top:' 
-     + loc.y + 'vw">'
-     + '<div class"editpanel"><textarea></textarea><a id="submitlink"/><a id="removelink"/></div>'
-     + '<div class="showpanel"><p></p><a id="editlink">Edit</a><a id="handle">O</a></div>'
+     +e.pageX + 'px; top:'
+     +e.pageY + 'px">'
+     + '<div class="editpanel"><textarea></textarea><div><a id="submitlink">Submit</a><a id="discardlink">Discard</a></div></div>'
+     + '<div class="showpanel"><p class="msgbody"></p><div><a id="editlink">Edit</a></div></div>'
      + '</div>';
     $('#ground').append(html);
     refreshDraggables();
     //Future enhancement: emit event to create placeholder element 
     startEditing($('#'+msgid));
+}
+
+function clearUnsubmitted(){
+    $('.unsubmitted').remove();
 }
 
 //User has completed message, send to server to emit and close stub
@@ -85,6 +112,24 @@ function sendMessage(sender, e){
     cacheOwnedMessage(msg);
 }
 
+function getMessage(id){
+    var _loc = {
+        x: $('#' + id).css('left'),
+        y: $('#' + id).css('top')
+    }
+    var _size = {
+        wd: $('#' + id).data('dwidth'),
+        ht: $('#' + id).data('dheight')
+    }
+    var msg = {
+        id: id,
+        body: $('#' + id).find('textarea').val(),
+        location: _loc,
+        size: _size
+    }
+    return msg;
+}
+
 //Request messages from the server and add them to the view
 function populate(msgcoll){
     //foreach message addLocatedElement
@@ -99,25 +144,44 @@ function refreshDraggables(){
             clickbuffer = false;
         },
         stop: function (event, ui) {
-            alert(ui.position);
+            if ($('#' + event.target.id).hasClass('unsubmitted')){
+                console.log('moved an unsubmitted message box');
+                return;
+            }
+            socket.emit('update', getMessage(event.target.id));
+            //convertElementLocation($('#' + event.target.id));
+            //TODO: event.target.id translate coords to vw
         }
     });
 }
 
-//Open message editing interface after checking against cached list of owned messages
+//Open message editing interface
+//Future enhancement: ...after checking against cached list of owned messages
 function startEditing(sender){
     var msgid = $(sender).attr('id');
     sender.addClass('editing');
 }
 
-function finishEditing(discard = null, message){
-    var id = '#' + message.id;
+// function removeMessage(sender){
+//     if (!sender.hasClass('unsubmitted')){
+//         socket.emit('update', getMessage(event.target.id));
+//     }
+// }
+
+function finishEditing(_id, discard = null) {
+    var id = '#' + _id;
     if(discard){
         $(id).remove();
-        socket.emit('remove', message.id);
+        socket.emit('remove', _id);
         return;
     }
-    socket.emit('message', message);
+    copyBody(_id);
+    var message = getMessage(_id);
+
+    $(id).removeClass('unsubmitted');
+    $(id).removeClass('editing');
+    
+    socket.emit('update', message);
     cacheOwnedMessage(message);
 }
 
@@ -126,6 +190,41 @@ function determineRelLocation(position){
     //TODO given pixel location, return vw unit location
     var vwinpx = 100/winwd; //vw per pixel
     return {x: position.x * vwinpx, y: position.y * vwinpx};
+}
+
+function convertElementLocation(element){
+    var offset = element.offset();
+    var updated = determineRelLocation({x: offset.left, y: offset.top});
+    element.css({
+        'top': updated.y + 'vw',
+        'left': updated.x + 'vw'
+    });
+}
+
+//Revert
+function discardChanges(_id){
+    var id = '#' + _id;
+    $(id).removeClass('editing');
+    if ($(id).hasClass('unsubmitted')){
+        $(id).remove();
+    } else {
+        $(id + ' .editpanel textarea').val($(id + ' .showpanel p.msgbody').html());
+    }
+
+}
+
+//Caches the display size of the text and copies input text into display element
+function copyBody(_id){
+    var id = '#' + _id;
+    $(id + ' .showpanel p.msgbody').html($(id + ' .editpanel textarea').val());
+    var inputht = $(id).find('textarea').get(0).scrollHeight;
+    var inputwd = $(id).find('textarea').width();
+    $(id + ' .showpanel p.msgbody').css({
+        'height': inputht,
+        'width': inputwd
+    })
+    $(id).data('dwidth', inputwd);
+    $(id).data('dheight', inputht);
 }
 
 //Based on a socket .updateLocation call or a user's own drag
@@ -142,7 +241,6 @@ function cacheOwnedMessage(msg){
     } else {
         myMessages.push(msg);
     }
-
 }
 
 function uuidv4() {

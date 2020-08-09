@@ -6,6 +6,9 @@ var path = require('path');
 
 app.use(express.static(path.join(__dirname, 'public')));
 
+const config = require('config');
+const app_config = config.get('appconfig');
+
 app.get('/', (req, res) => {
     res.sendFile(__dirname + '/index.html');
 });

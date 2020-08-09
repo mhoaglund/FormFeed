@@ -1,0 +1,35 @@
+#ground{
+    width: 300vw;
+    height: 300vw;
+    background: blue;
+}
+
+.message{
+    position: absolute;
+    top: 0;
+    left: 0;
+    padding: 1rem;
+    background: white;
+    border: 1px solid #222;
+    border-radius: 0.2rem;
+}
+
+.message .editpanel {display: none;}
+.message .showpanel{display: block;}
+.message.editing .editpanel{
+    display: block;
+    min-width: 5vw;
+    min-height: 4rem;
+}
+.message.editing .showpanel{display: none;}
+
+
+.message.showpanel{
+    position: relative;
+}
+
+.message.showpanel .handle {
+    position: absolute;
+    top: 0;
+    left: 0;
+}

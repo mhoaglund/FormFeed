@@ -2,7 +2,8 @@
 <html>
 
 <head>
-    <title>Socket.IO chat</title>
+    <title>Feed1</title>
+    <link rel="stylesheet" type="text/css" href="../css/main.css"/>
     <style>
         * {
             margin: 0;
@@ -53,13 +54,18 @@
 </head>
 
 <body>
-    <ul id="messages"></ul>
+    <!-- <ul id="messages"></ul>
     <form action="">
         <input id="m" autocomplete="off" /><button>Send</button>
-    </form>
+    </form> -->
+    <main id="ground">
+        <div class="message" id="test">Hello World</div>
+    </main>
     <script src="/socket.io/socket.io.js"></script>
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@shopify/draggable@1.0.0-beta.7/lib/draggable.bundle.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    <script src="../scripts/jquery.ui.touch-punch.min.js"></script>
+
     <script src="../scripts/main.js"></script>
 </body>
 

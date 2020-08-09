@@ -188,6 +188,7 @@ function populate(msgcoll){
         data: (token) ? token : null,
         dataType: 'html'
     });
+    var entities;
     posts.done(function (data, textStatus, jqXHR) {
         if (jqXHR.getResponseHeader("Continuation-Token")) {
             token = $.parseJSON(jqXHR.getResponseHeader("Continuation-Token"));
@@ -195,14 +196,16 @@ function populate(msgcoll){
             reachedEnd = true;
             console.log("Reached end of posts.");
         }
-        $("#output").append(data);
+        entities = JSON.parse(data).reply.value;
+        entities.forEach(function(item){
+            item.location = JSON.parse(item.location);
+            item.size = JSON.parse(item.size);
+            item.id = item.ident;
+            createMessageAtLocation(item);
+        })
     });
     posts.always(function () {
-        $("#spinner").css({
-            'display': 'none'
-        });
         debouncing = false;
-        docheight = $(document).height() - 400;
     })
     refreshDraggables();
 }

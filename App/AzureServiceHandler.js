@@ -63,33 +63,24 @@ module.exports.Update = function(_payload, _cb){
         rk = found.rowKey;
         console.log('Updating existing entity...')
     }
-        var _row = {
-            PartitionKey: entGen.String(config.get('appconfig.partkey')),
-            RowKey: entGen.String(rk),
-            uploaded: entGen.DateTime(new Date(now_utc)),
-            ident: entGen.String(_payload.id),
-            body: entGen.String(_payload.body),
-            location: entGen.String(JSON.stringify(_payload.location)),
-            size: entGen.String(JSON.stringify(_payload.size))
-        }
-        tableInsertOrReplace(_row, function(result){
-            keyMap.push({
-                id: _payload.id,
-                rowKey: rk
-            })
-            console.log(result)
-            console.log(keyMap)
-            _cb(result);
+    var _row = {
+        PartitionKey: entGen.String(config.get('appconfig.partkey')),
+        RowKey: entGen.String(rk),
+        uploaded: entGen.DateTime(new Date(now_utc)),
+        ident: entGen.String(_payload.id),
+        body: entGen.String(_payload.body),
+        location: entGen.String(JSON.stringify(_payload.location)),
+        size: entGen.String(JSON.stringify(_payload.size))
+    }
+    tableInsertOrReplace(_row, function(result){
+        keyMap.push({
+            id: _payload.id,
+            rowKey: rk
         })
-        // tableService.insertOrReplaceEntity(config.get('appconfig.tablecontainer'), _row, function (error, result, response) {
-        //     if (!error) {
-        //         console.log(result)
-        //         callback(true);
-        //     } else {
-        //         console.log(error)
-        //         callback(false);
-        //     }
-        // });
+        console.log(result)
+        console.log(keyMap)
+        _cb(result);
+    })
 }
 
 //Continuation token stuff: https://coderead.wordpress.com/2012/08/20/handling-continuation-tokens-with-node-js-on-windows-azure-table-storage/
@@ -104,11 +95,12 @@ module.exports.getEntities = function (_clienttoken = null, _cb) {
             if (result.continuationToken) {
                 var token = result.continuationToken;
             }
-            _cb(result.entries, token);
+            _cb(response.body, token);
         } else {
             _cb("Nope");
         }
     });
+    //TODO update rowkey dictionary locally
 }
 
 module.exports.getEntity = function (_rowKey, _cb) {

@@ -13,6 +13,8 @@ const {
 
 const maxDate = new Date(8640000000000000);
 
+const keyMap = []
+
 function newRowKey(){
     var invertedTicks = String(8640000000000000 - Date.now()).padStart(20, '0');
     return invertedTicks;
@@ -25,29 +27,69 @@ module.exports.Import = function(_payload, _cb){
     //     location: _loc,
     //     size: _size
     // }
+    var date = new Date();
+    var rk = newRowKey();
     var now_utc = Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate(),
         date.getUTCHours(), date.getUTCMinutes(), date.getUTCSeconds());
     var _row = {
         PartitionKey: entGen.String(config.get('appconfig.partkey')),
-        RowKey: entGen.String(invertedTicks),
+        RowKey: entGen.String(rk),
         uploaded: entGen.DateTime(new Date(now_utc)),
         ident: entGen.String(_payload.id),
         body: entGen.String(_payload.body),
-        location: entGen.String(JSON.stringify(_payload.loc)),
+        location: entGen.String(JSON.stringify(_payload.location)),
         size: entGen.String(JSON.stringify(_payload.size))
     }
+    tableUpload(_row, function(result){
+        keyMap.push({
+            id: _payload.id,
+            rowKey: rk
+        })
+        console.log(keyMap)
+        _cb(result);
+    })
 }
 
 module.exports.Update = function(_payload, _cb){
-    tableService.replaceEntity(config.get('appconfig.tablecontainer'), _inputrow, function (error, result, response) {
-        if (!error) {
-            console.log(result)
-            callback(true);
-        } else {
-            console.log(error)
-            callback(false);
+    let found = keyMap.find(o => o.id === _payload.id);
+    var rk;
+    var date = new Date();
+    var now_utc = Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate(),
+        date.getUTCHours(), date.getUTCMinutes(), date.getUTCSeconds());
+    if (!found) {
+        rk = newRowKey();
+        console.log('Entity not listed, creating new rowKey')
+    } else {
+        rk = found.rowKey;
+        console.log('Updating existing entity...')
+    }
+        var _row = {
+            PartitionKey: entGen.String(config.get('appconfig.partkey')),
+            RowKey: entGen.String(rk),
+            uploaded: entGen.DateTime(new Date(now_utc)),
+            ident: entGen.String(_payload.id),
+            body: entGen.String(_payload.body),
+            location: entGen.String(JSON.stringify(_payload.location)),
+            size: entGen.String(JSON.stringify(_payload.size))
         }
-    });
+        tableInsertOrReplace(_row, function(result){
+            keyMap.push({
+                id: _payload.id,
+                rowKey: rk
+            })
+            console.log(result)
+            console.log(keyMap)
+            _cb(result);
+        })
+        // tableService.insertOrReplaceEntity(config.get('appconfig.tablecontainer'), _row, function (error, result, response) {
+        //     if (!error) {
+        //         console.log(result)
+        //         callback(true);
+        //     } else {
+        //         console.log(error)
+        //         callback(false);
+        //     }
+        // });
 }
 
 //Continuation token stuff: https://coderead.wordpress.com/2012/08/20/handling-continuation-tokens-with-node-js-on-windows-azure-table-storage/
@@ -113,6 +155,18 @@ module.exports.blobUploadAsync = function (_inputfile, _cb) {
 
 function tableUpload(_inputrow, callback) {
     tableService.insertEntity(config.get('appconfig.tablecontainer'), _inputrow, function (error, result, response) {
+        if (!error) {
+            console.log(result)
+            callback(true);
+        } else {
+            console.log(error)
+            callback(false);
+        }
+    });
+}
+
+function tableInsertOrReplace(_inputrow, callback) {
+    tableService.insertOrReplaceEntity(config.get('appconfig.tablecontainer'), _inputrow, function (error, result, response) {
         if (!error) {
             console.log(result)
             callback(true);

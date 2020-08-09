@@ -16,7 +16,21 @@ app.get('/', (req, res) => {
 });
 
 app.get('/refresh', (req,res) => {
-    res.send('Hello World');
+    if (req.query.nextRowKey) {
+        var clienttoken = {
+            nextRowKey: req.query.nextRowKey,
+            nextPartitionKey: req.query.nextPartitionKey,
+            targetLocation: Number(req.query.targetLocation)
+        }
+    }
+    let posts = asHandler.getEntities(clienttoken, function (reply, token) {
+        if (token) {
+            res.append("Continuation-Token", JSON.stringify(token));
+        }
+        res.send({
+            reply
+        });
+    });
 })
 
 io.on('connection', (socket) => {
@@ -27,10 +41,16 @@ io.on('connection', (socket) => {
     socket.on('submit', (msg) => {
         console.log('created message: ' + msg.id);
         socket.broadcast.emit('create_message', msg);
+        asHandler.Update(msg, function () {
+            console.log('uploaded.')
+        });
     });
     socket.on('update', (msg) =>{
         console.log('updated message: ' + msg.id);
         socket.broadcast.emit('update_message', msg);
+        asHandler.Update(msg, function () {
+            console.log('updated.')
+        });
     })
 });
 

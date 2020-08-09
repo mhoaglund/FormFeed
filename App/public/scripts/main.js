@@ -73,6 +73,7 @@ var oallwth;
 var oallctr;
 var winht;
 var winwd;
+var token = undefined;
 
 function setOalls() {
     oallht = $(document).height();
@@ -181,6 +182,28 @@ function getMessage(id){
 //Request messages from the server and add them to the view
 function populate(msgcoll){
     //foreach message addLocatedElement
+    var posts = $.ajax({
+        type: 'GET',
+        url: '/refresh',
+        data: (token) ? token : null,
+        dataType: 'html'
+    });
+    posts.done(function (data, textStatus, jqXHR) {
+        if (jqXHR.getResponseHeader("Continuation-Token")) {
+            token = $.parseJSON(jqXHR.getResponseHeader("Continuation-Token"));
+        } else {
+            reachedEnd = true;
+            console.log("Reached end of posts.");
+        }
+        $("#output").append(data);
+    });
+    posts.always(function () {
+        $("#spinner").css({
+            'display': 'none'
+        });
+        debouncing = false;
+        docheight = $(document).height() - 400;
+    })
     refreshDraggables();
 }
 

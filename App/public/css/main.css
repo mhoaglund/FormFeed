@@ -72,3 +72,12 @@ div{
     border: 1px solid gray;
     border-radius: 5px;
 }
+
+.showpanel #editlink{
+    opacity: 0;
+}
+
+.message:hover .showpanel #editlink {
+    opacity: 1;
+    transition: opacity 0.3s;
+}

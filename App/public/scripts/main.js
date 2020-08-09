@@ -21,6 +21,15 @@ $(function () {
         createMessageAtLocation(msg);
     });
 
+    socket.on('update_message', function (msg) {
+        if (!$('#' + msg.id).length) {
+            console.log("This message was missing. Creating...");
+            createMessageAtLocation(msg);
+            return;
+        }
+        updateMessage(msg);
+    });
+
     $(document).on("click", '#ground', function (e) {
         startMessageAtLocation(e);
     });
@@ -117,6 +126,19 @@ function createMessageAtLocation(msg){
     //     'width': msg.size.x + 'px'
     // });
     $('#' + msg.id + ' .editpanel textarea').val(msg.body);
+    refreshDraggables();
+}
+
+function updateMessage(msg){
+    $('#' + msg.id).css({
+        'top':msg.location.y,
+        'left':msg.location.x
+    })
+    $('#' + msg.id + ' .editpanel textarea').width(msg.size.wd).height(msg.size.ht);
+    $('#' + msg.id + ' .showpanel p.msgbody').width(msg.size.wd).height(msg.size.ht);
+
+    $('#' + msg.id + ' .editpanel textarea').val(msg.body);
+    $('#' + msg.id + ' .showpanel p.msgbody').html(msg.body);
 }
 
 function clearUnsubmitted(){

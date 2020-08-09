@@ -7,12 +7,6 @@ $(function () {
         setOalls();
     });
 
-    // $('form').submit(function (e) {
-    //     e.preventDefault(); // prevents page reloading
-    //     socket.emit('chat message', $('#m').val());
-    //     $('#m').val('');
-    //     return false;
-    // });
     socket.on('create_message', function (msg) {
         if($('#'+msg.id).length){
             console.log("Already have this one somehow.");
@@ -116,17 +110,13 @@ function createMessageAtLocation(msg){
         '<div class="showpanel"><p class="msgbody">' + msg.body + '</p><div><a id="editlink">Edit</a></div></div>' +
         '</div>';
     $('#ground').append(html);
-    // $('#'+msg.id + ' .editpanel textarea').css({
-    //     'height': msg.size.y + 'px',
-    //     'width': msg.size.x + 'px'
-    // });
-    $('#' + msg.id + ' .editpanel textarea').width(msg.size.wd).height(msg.size.ht);
-    $('#' + msg.id + ' .showpanel p.msgbody').width(msg.size.wd).height(msg.size.ht);
-    // $('#' + msg.id + ' .showpanel p.msgbody').css({
-    //     'height': msg.size.y + 'px',
-    //     'width': msg.size.x + 'px'
-    // });
-    $('#' + msg.id + ' .editpanel textarea').val(msg.body);
+    var _id = '#' + msg.id;
+    $(_id +' .editpanel textarea').width(msg.size.wd).height(msg.size.ht);
+    $(_id +' .showpanel p.msgbody').width(msg.size.wd).height(msg.size.ht);
+
+    $(_id +' .editpanel textarea').val(msg.body);
+    $(_id).data('dwidth', msg.size.wd);
+    $(_id).data('dheight', msg.size.ht);
     refreshDraggables();
 }
 

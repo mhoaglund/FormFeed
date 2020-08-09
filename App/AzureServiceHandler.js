@@ -59,6 +59,10 @@ module.exports.Update = function(_payload, _cb){
     if (!found) {
         rk = newRowKey();
         console.log('Entity not listed, creating new rowKey')
+        keyMap.push({
+            id: _payload.id,
+            rowKey: rk
+        })
     } else {
         rk = found.rowKey;
         console.log('Updating existing entity...')
@@ -73,12 +77,6 @@ module.exports.Update = function(_payload, _cb){
         size: entGen.String(JSON.stringify(_payload.size))
     }
     tableInsertOrReplace(_row, function(result){
-        keyMap.push({
-            id: _payload.id,
-            rowKey: rk
-        })
-        console.log(result)
-        console.log(keyMap)
         _cb(result);
     })
 }
@@ -95,6 +93,16 @@ module.exports.getEntities = function (_clienttoken = null, _cb) {
             if (result.continuationToken) {
                 var token = result.continuationToken;
             }
+            response.body.value.forEach(function(entity){
+                let found = keyMap.find(o => o.id === entity.ident);
+                if(!found){
+                    console.log('Updating entity cache...')
+                    keyMap.push({
+                        id: entity.ident,
+                        rowKey: entity.RowKey
+                    })
+                }
+            })
             _cb(response.body, token);
         } else {
             _cb("Nope");

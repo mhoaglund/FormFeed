@@ -107,12 +107,14 @@ function createMessageAtLocation(msg){
         msg.location.x + '; top:' +
         msg.location.y + '">' +
         '<div class="editpanel"><textarea></textarea><div><a id="submitlink">Submit</a><a id="discardlink">Discard</a></div></div>' +
-        '<div class="showpanel"><p class="msgbody">' + msg.body + '</p><div><a id="editlink">Edit</a></div></div>' +
+        '<div class="showpanel"><p class="msgbody"></p><div><a id="editlink">Edit</a></div></div>' +
         '</div>';
     $('#ground').append(html);
     var _id = '#' + msg.id;
     $(_id +' .editpanel textarea').width(msg.size.wd).height(msg.size.ht);
     $(_id +' .showpanel p.msgbody').width(msg.size.wd).height(msg.size.ht);
+
+    $(_id + ' .showpanel p.msgbody').text(msg.body);
 
     $(_id +' .editpanel textarea').val(msg.body);
     $(_id).data('dwidth', msg.size.wd);
@@ -129,7 +131,7 @@ function updateMessage(msg){
     $('#' + msg.id + ' .showpanel p.msgbody').width(msg.size.wd).height(msg.size.ht);
 
     $('#' + msg.id + ' .editpanel textarea').val(msg.body);
-    $('#' + msg.id + ' .showpanel p.msgbody').html(msg.body);
+    $('#' + msg.id + ' .showpanel p.msgbody').text(msg.body);
 }
 
 function clearUnsubmitted(){
@@ -282,7 +284,7 @@ function discardChanges(_id){
 //Caches the display size of the text and copies input text into display element
 function copyBody(_id){
     var id = '#' + _id;
-    $(id + ' .showpanel p.msgbody').html($(id + ' .editpanel textarea').val());
+    $(id + ' .showpanel p.msgbody').text($(id + ' .editpanel textarea').val());
     var inputht = $(id).find('textarea').get(0).scrollHeight;
     var inputwd = $(id).find('textarea').width();
     $(id + ' .showpanel p.msgbody').css({

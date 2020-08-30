@@ -28,6 +28,7 @@ div{
     background: white;
     border: 1px solid #222;
     border-radius: 0.2rem;
+    border-width: 3px;
 }
 
 .message .editpanel {display: none;}
@@ -80,4 +81,44 @@ div{
 .message:hover .showpanel #editlink {
     opacity: 1;
     transition: opacity 0.3s;
+}
+.color-picker-item{
+    display: block;
+    height: 2rem;
+    width: 2rem;
+    border-radius:2rem;
+}
+
+/* Color Palette */
+.none {
+    border-color: #888;
+}
+.blue{
+    border-color: #471CAD;
+}
+.color-picker-item.blue{
+    background-color: #471CAD;
+}
+.blue-back {
+    background-color: #471CAD;
+}
+
+.green{
+    border-color: #A6C267;
+}
+.color-picker-item.green {
+    background-color: #A6C267;
+}
+.green-back {
+    background-color: #A6C267;
+}
+
+.mauve{
+    border-color: #7467A4;
+}
+.color-picker-item.mauve {
+    background-color: #7467A4;
+}
+.mauve-back{
+    background-color: #7467A4;
 }

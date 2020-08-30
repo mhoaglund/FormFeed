@@ -33,6 +33,16 @@ app.get('/refresh', (req,res) => {
     });
 })
 
+app.get('/settings', (req,res) => {
+    if (req.query.RowKey && req.query.PartKey) {
+            let posts = asHandler.getEntity(req.query.RowKey, function (reply, token) {
+                res.send({
+                    reply
+                });
+            }, req.query.PartKey);
+    }
+})
+
 io.on('connection', (socket) => {
     console.log('a user connected');
     socket.on('disconnect', () => {

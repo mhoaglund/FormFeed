@@ -1,8 +1,6 @@
 var socket = io();
 
 $(function () {
-    
-
     $(window).resize(function () {
         setOalls();
     });
@@ -48,6 +46,14 @@ $(function () {
         }
     });
 
+    $(document).on("click", '.color-picker-item', function (e) {
+        e.stopPropagation();
+        var color = $(this).attr('id');
+        var parent = $(this).parents('.message');
+        parent.data('temp-color', color);
+        setColor(parent, parent.data('temp-color'));
+    });
+
     $(document).on("click", '#submitlink', function (e) {
         e.stopPropagation();
         //TODO locate message parent and get id value to finish editing
@@ -81,57 +87,104 @@ function setOalls() {
 }
 
 myMessages = []
+mySettings = []
+_mySettings = {}
+myExpectedSettings = ['colors', 'types']
 
 //Update the view with a new message stub+textarea, send message to server to emit
 function startMessageAtLocation(e){
     clearUnsubmitted();
     var msgid = uuidv4();
-    //alert(e.pageX + ' , ' + e.pageY);
-    //var loc = determineRelLocation({x: e.pageX, y: e.pageY});
-    var html = '<div class="message unsubmitted" id="'
-     + msgid + '" style="left:' 
-     +e.pageX + 'px; top:'
-     +e.pageY + 'px">'
-     + '<div class="editpanel"><textarea></textarea><div><a id="submitlink">Submit</a><a id="discardlink">Discard</a></div></div>'
-     + '<div class="showpanel"><p class="msgbody"></p><div><a id="editlink">Edit</a></div></div>'
-     + '</div>';
+    var html = buildHTMLMessage(msgid, e.pageX + 'px', e.pageY + 'px');
     $('#ground').append(html);
+    $('#' + msgid).data('color', 'none');
+    $('#' + msgid).addClass('unsubmitted');
     refreshDraggables();
     //Future enhancement: emit event to create placeholder element 
     startEditing($('#'+msgid));
 }
 
 function createMessageAtLocation(msg){
-    var html = '<div class="message" id="' +
-        msg.id + '" style="left:' +
-        msg.location.x + '; top:' +
-        msg.location.y + '">' +
-        '<div class="editpanel"><textarea></textarea><div><a id="submitlink">Submit</a><a id="discardlink">Discard</a></div></div>' +
-        '<div class="showpanel"><p class="msgbody"></p><div><a id="editlink">Edit</a></div></div>' +
-        '</div>';
+    var html = buildHTMLMessage(msg.id, msg.location.x, msg.location.y);
     $('#ground').append(html);
     var _id = '#' + msg.id;
     $(_id +' .editpanel textarea').width(msg.size.wd).height(msg.size.ht);
     $(_id +' .showpanel p.msgbody').width(msg.size.wd).height(msg.size.ht);
-
-    $(_id + ' .showpanel p.msgbody').text(msg.body);
-
+    $(_id +' .showpanel p.msgbody').text(msg.body);
     $(_id +' .editpanel textarea').val(msg.body);
     $(_id).data('dwidth', msg.size.wd);
     $(_id).data('dheight', msg.size.ht);
+    $(_id).data('color', msg.color);
+    $(_id).addClass(msg.color);
     refreshDraggables();
+}
+
+function buildHTMLMessage(id, x, y){
+    return '<div class="message" id="' +
+        id + '" style="left:' +
+        x + '; top:' +
+        y + '">' +
+        '<div class="editpanel">' +
+        '<textarea></textarea>' +
+        '<div><a id="submitlink">Submit</a><a id="discardlink">Discard</a></div>' +
+        buildSettingsInterface() +
+        '</div>' +
+        '<div class="showpanel"><p class="msgbody"></p><div><a id="editlink">Edit</a></div></div>' +
+        '</div>';
+}
+
+function getSetting(setting, _cb = null){
+        var req = $.ajax({
+            type: 'GET',
+            url: '/settings?PartKey=settings&RowKey=' + setting,
+            data: (token) ? token : null,
+            dataType: 'html'
+        });
+        var entities;
+        req.done(function (data, textStatus, jqXHR) {
+            entity = JSON.parse(data).reply;
+            mySettings.push(entity);
+            _mySettings[entity.RowKey] = entity;
+        });
+}
+
+function buildSettingsInterface(){
+    var html = ''
+    mySettings.forEach(function (setting) {
+        html += '<div class="' + setting.RowKey + '-picker">'
+        arrFromCSL(setting.body).forEach(function (item) {
+            if (setting.RowKey == 'colors') {
+                html += '<div class="color-picker-item '+item+'" id="' + item + '"></div>'
+            }
+            // } else {
+            //     html += '<a class="' + setting.RowKey + ' picker-item" id="' + setting.RowKey + '_' + item + '">' + item + '</a>'
+            // }
+        });
+        html += '</div>'
+    })
+    return html;
 }
 
 function updateMessage(msg){
     $('#' + msg.id).css({
         'top':msg.location.y,
         'left':msg.location.x
-    })
+    });
+    $('#' + msg.id).data('color',msg.color);
+    setColor($('#' + msg.id), $('#' + msg.id).data('color'));
     $('#' + msg.id + ' .editpanel textarea').width(msg.size.wd).height(msg.size.ht);
     $('#' + msg.id + ' .showpanel p.msgbody').width(msg.size.wd).height(msg.size.ht);
 
     $('#' + msg.id + ' .editpanel textarea').val(msg.body);
     $('#' + msg.id + ' .showpanel p.msgbody').text(msg.body);
+}
+
+function setColor(sender, _color){
+    //set color on sender, clearing others
+    arrFromCSL(_mySettings.colors.body).forEach(function (item){
+        sender.removeClass(item);
+    })
+    sender.addClass(_color);
 }
 
 function clearUnsubmitted(){
@@ -166,7 +219,8 @@ function getMessage(id){
         id: id,
         body: $('#' + id).find('textarea').val(),
         location: _loc,
-        size: _size
+        size: _size,
+        color: $('#' + id).data('color')
     }
     return msg;
 }
@@ -174,6 +228,10 @@ function getMessage(id){
 //Request messages from the server and add them to the view
 function populate(msgcoll){
     //foreach message addLocatedElement
+    $(myExpectedSettings).each(function(){
+        var _setting = this;
+        getSetting(_setting);
+    })
     var posts = $.ajax({
         type: 'GET',
         url: '/refresh',
@@ -193,13 +251,17 @@ function populate(msgcoll){
             item.location = JSON.parse(item.location);
             item.size = JSON.parse(item.size);
             item.id = item.ident;
+            if(item.color){
+                console.log(item);
+            }
             createMessageAtLocation(item);
         })
     });
     posts.always(function () {
         debouncing = false;
+        refreshDraggables();
     })
-    refreshDraggables();
+
 }
 
 function refreshDraggables(){
@@ -215,8 +277,6 @@ function refreshDraggables(){
                 return;
             }
             socket.emit('update', getMessage(event.target.id));
-            //convertElementLocation($('#' + event.target.id));
-            //TODO: event.target.id translate coords to vw
         }
     });
 }
@@ -242,7 +302,9 @@ function finishEditing(_id, discard = null) {
         return;
     }
     copyBody(_id);
+    $(id).data('color', $(id).data('temp-color'));
     var message = getMessage(_id);
+
     if($(id).hasClass('unsubmitted')){
         $(id).removeClass('unsubmitted');
         socket.emit('submit', message);
@@ -253,20 +315,8 @@ function finishEditing(_id, discard = null) {
     cacheOwnedMessage(message);
 }
 
-//Determine a relative location for an element based on its pixel space location
-function determineRelLocation(position){
-    //TODO given pixel location, return vw unit location
-    var vwinpx = 100/winwd; //vw per pixel
-    return {x: position.x * vwinpx, y: position.y * vwinpx};
-}
-
-function convertElementLocation(element){
-    var offset = element.offset();
-    var updated = determineRelLocation({x: offset.left, y: offset.top});
-    element.css({
-        'top': updated.y + 'vw',
-        'left': updated.x + 'vw'
-    });
+function arrFromCSL(_csl, del = ','){
+    return _csl.split(del);
 }
 
 //Revert
@@ -277,8 +327,8 @@ function discardChanges(_id){
         $(id).remove();
     } else {
         $(id + ' .editpanel textarea').val($(id + ' .showpanel p.msgbody').html());
+        setColor($(id), $(id).data('color'));
     }
-
 }
 
 //Caches the display size of the text and copies input text into display element
@@ -294,12 +344,6 @@ function copyBody(_id){
     $(id).data('dwidth', inputwd);
     $(id).data('dheight', inputht);
 }
-
-//Based on a socket .updateLocation call or a user's own drag
-function updateRelLocation(){}
-
-//A new element has to be added and it has relative locating coords- add it to the view
-function addLocatedElement(){}
 
 function cacheOwnedMessage(msg){
     //TODO check for id in msg list

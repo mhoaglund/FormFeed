@@ -3,7 +3,8 @@
         "blobaccount":"formfeeddata",
         "blobcontainer":"formfeedblob",
         "tablecontainer":"formfeedtable",
-        "partkey":"message",
+        "contentkey":"message",
+        "settingskey": "settings",
         "maxentities":100,
         "dbconfig":{
             "host":"",

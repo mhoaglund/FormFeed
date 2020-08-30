@@ -32,7 +32,7 @@ module.exports.Import = function(_payload, _cb){
     var now_utc = Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate(),
         date.getUTCHours(), date.getUTCMinutes(), date.getUTCSeconds());
     var _row = {
-        PartitionKey: entGen.String(config.get('appconfig.partkey')),
+        PartitionKey: entGen.String(config.get('appconfig.contentkey')),
         RowKey: entGen.String(rk),
         uploaded: entGen.DateTime(new Date(now_utc)),
         ident: entGen.String(_payload.id),
@@ -68,13 +68,14 @@ module.exports.Update = function(_payload, _cb){
         console.log('Updating existing entity...')
     }
     var _row = {
-        PartitionKey: entGen.String(config.get('appconfig.partkey')),
+        PartitionKey: entGen.String(config.get('appconfig.contentkey')),
         RowKey: entGen.String(rk),
         uploaded: entGen.DateTime(new Date(now_utc)),
         ident: entGen.String(_payload.id),
         body: entGen.String(_payload.body),
         location: entGen.String(JSON.stringify(_payload.location)),
-        size: entGen.String(JSON.stringify(_payload.size))
+        size: entGen.String(JSON.stringify(_payload.size)),
+        color: entGen.String(_payload.color)
     }
     tableInsertOrReplace(_row, function(result){
         _cb(result);
@@ -85,7 +86,7 @@ module.exports.Update = function(_payload, _cb){
 module.exports.getEntities = function (_clienttoken = null, _cb) {
     var query = new azure.TableQuery()
         .top(config.get('appconfig.maxentities'))
-        .where('PartitionKey eq ?', config.get('appconfig.partkey'));
+        .where('PartitionKey eq ?', config.get('appconfig.contentkey'));
 
     tableService.queryEntities(config.get('appconfig.tablecontainer'), query, _clienttoken,{payloadFormat:"application/json;odata=nometadata"}, function (error, result, response) {
         if (!error) {
@@ -111,14 +112,13 @@ module.exports.getEntities = function (_clienttoken = null, _cb) {
     //TODO update rowkey dictionary locally
 }
 
-module.exports.getEntity = function (_rowKey, _cb) {
+module.exports.getEntity = function (_rowKey, _cb, partition = 'message') {
     var query = new azure.TableQuery()
         .top(1)
         .where('RowKey eq ?', '_rowKey');
-    tableService.retrieveEntity(config.get('appconfig.tablecontainer'), config.get('appconfig.partkey'), _rowKey, function (error, result, response) {
+    tableService.retrieveEntity(config.get('appconfig.tablecontainer'), partition, _rowKey, {payloadFormat: "application/json;odata=nometadata"}, function (error, result, response) {
         if (!error) {
-            // result.entries contains entities matching the query
-            _cb(result[0]);
+            _cb(response.body);
         } else {
             _cb("Nope");
         }

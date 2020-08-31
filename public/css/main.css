@@ -29,6 +29,13 @@ div{
     border: 1px solid #222;
     border-radius: 0.2rem;
     border-width: 3px;
+    animation:dim 35s;
+    animation-iteration-count: 1;
+    animation-fill-mode: forwards;
+}
+
+.message.unsubmitted{
+    -webkit-animation:none;
 }
 
 .message .editpanel {display: none;}
@@ -87,11 +94,18 @@ div{
     height: 2rem;
     width: 2rem;
     border-radius:2rem;
+    margin-left: 1rem;
 }
 
+.editpanel > div.colors-picker{
+    justify-content: flex-end;
+}
 /* Color Palette */
 .none {
-    border-color: #888;
+    border-color: #222;
+}
+.color-picker-item.none{
+    border: 1px solid;
 }
 .blue{
     border-color: #471CAD;
@@ -121,4 +135,16 @@ div{
 }
 .mauve-back{
     background-color: #7467A4;
+}
+
+/* Animations */
+@-webkit-keyframes dim {
+    from,
+    to {
+        background: white;
+    }
+
+    100% {
+        background: #dcdcdc;
+    }
 }

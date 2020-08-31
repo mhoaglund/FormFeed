@@ -151,16 +151,14 @@ function getSetting(setting, _cb = null){
 function buildSettingsInterface(){
     var html = ''
     mySettings.forEach(function (setting) {
-        html += '<div class="' + setting.RowKey + '-picker">'
-        arrFromCSL(setting.body).forEach(function (item) {
-            if (setting.RowKey == 'colors') {
-                html += '<div class="color-picker-item '+item+'" id="' + item + '"></div>'
-            }
-            // } else {
-            //     html += '<a class="' + setting.RowKey + ' picker-item" id="' + setting.RowKey + '_' + item + '">' + item + '</a>'
-            // }
-        });
-        html += '</div>'
+        if (setting.RowKey == 'colors') {
+            html += '<div class="' + setting.RowKey + '-picker">'
+            arrFromCSL(setting.body).forEach(function (item) {
+                html += '<div class="color-picker-item ' + item + '" id="' + item + '"></div>'
+            });
+            html += '</div>'
+        }
+        
     })
     return html;
 }
@@ -170,6 +168,7 @@ function updateMessage(msg){
         'top':msg.location.y,
         'left':msg.location.x
     });
+    reset_animation(msg.id);
     $('#' + msg.id).data('color',msg.color);
     setColor($('#' + msg.id), $('#' + msg.id).data('color'));
     $('#' + msg.id + ' .editpanel textarea').width(msg.size.wd).height(msg.size.ht);
@@ -179,8 +178,14 @@ function updateMessage(msg){
     $('#' + msg.id + ' .showpanel p.msgbody').text(msg.body);
 }
 
+function reset_animation(id) {
+    var el = document.getElementById(id);
+    el.style.animation = 'none';
+    el.offsetHeight; /* trigger reflow */
+    el.style.animation = null;
+}
+
 function setColor(sender, _color){
-    //set color on sender, clearing others
     arrFromCSL(_mySettings.colors.body).forEach(function (item){
         sender.removeClass(item);
     })
@@ -276,6 +281,7 @@ function refreshDraggables(){
                 console.log('moved an unsubmitted message box');
                 return;
             }
+            reset_animation(event.target.id);
             socket.emit('update', getMessage(event.target.id));
         }
     });
@@ -312,6 +318,7 @@ function finishEditing(_id, discard = null) {
         socket.emit('update', message);
     }
     $(id).removeClass('editing');
+    reset_animation(_id);
     cacheOwnedMessage(message);
 }
 

@@ -4,6 +4,7 @@
         "blobcontainer":"formfeedblob",
         "tablecontainer":"formfeedtable",
         "contentkey":"message",
+        "logkey":"history",
         "settingskey": "settings",
         "maxentities":100,
         "dbconfig":{

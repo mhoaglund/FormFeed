@@ -20,6 +20,7 @@ function newRowKey(){
     return invertedTicks;
 }
 
+// deprecated
 module.exports.Import = function(_payload, _cb){
     // var msg = {
     //     id: id,
@@ -53,6 +54,7 @@ module.exports.Import = function(_payload, _cb){
 module.exports.Update = function(_payload, _cb){
     let found = keyMap.find(o => o.id === _payload.id);
     var rk;
+    var op = 'new';
     var date = new Date();
     var now_utc = Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate(),
         date.getUTCHours(), date.getUTCMinutes(), date.getUTCSeconds());
@@ -65,6 +67,7 @@ module.exports.Update = function(_payload, _cb){
         })
     } else {
         rk = found.rowKey;
+        op = 'edit'
         console.log('Updating existing entity...')
     }
     var _row = {
@@ -77,8 +80,22 @@ module.exports.Update = function(_payload, _cb){
         size: entGen.String(JSON.stringify(_payload.size)),
         color: entGen.String(_payload.color)
     }
+    
     tableInsertOrReplace(_row, function(result){
+        log(_row, op)
         _cb(result);
+    })
+}
+
+function log(_row, _op){
+    var relates_to = _row.RowKey;
+    var _rk = newRowKey();
+    _row.PartitionKey = entGen.String(config.get('appconfig.logkey'))
+    _row.RowKey = entGen.String(_rk)
+    _row.RelatesTo = entGen.String(relates_to._)
+    _row.Event = entGen.String(_op)
+    tableUpload(_row, function(){
+        console.log("Completed logging operation")
     })
 }
 

@@ -6,7 +6,7 @@
         "contentkey":"message",
         "logkey":"history",
         "settingskey": "settings",
-        "maxentities":100,
+        "maxentities":500,
         "dbconfig":{
             "host":"",
             "port":"",

@@ -1,6 +1,11 @@
 var socket = io();
-
+var topic = "message";
 $(function () {
+    var _topic = getParameterByName('topic');
+    if(_topic){
+        topic = _topic;
+    }
+
     $(window).resize(function () {
         setOalls();
     });
@@ -86,6 +91,16 @@ function setOalls() {
     };
 }
 
+function getParameterByName(name, url) {
+    if (!url) url = window.location.href;
+    name = name.replace(/[\[\]]/g, '\\$&');
+    var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
+        results = regex.exec(url);
+    if (!results) return null;
+    if (!results[2]) return '';
+    return decodeURIComponent(results[2].replace(/\+/g, ' '));
+}
+
 myMessages = []
 mySettings = []
 _mySettings = {}
@@ -115,6 +130,7 @@ function createMessageAtLocation(msg){
     $(_id).data('dwidth', msg.size.wd);
     $(_id).data('dheight', msg.size.ht);
     $(_id).data('color', msg.color);
+    $(_id).data('topic',msg.topic);
     $(_id).addClass(msg.color);
     refreshDraggables();
 }
@@ -158,7 +174,6 @@ function buildSettingsInterface(){
             });
             html += '</div>'
         }
-        
     })
     return html;
 }
@@ -196,21 +211,6 @@ function clearUnsubmitted(){
     $('.unsubmitted').remove();
 }
 
-//User has completed message, send to server to emit and close stub
-function sendMessage(sender, e){
-    var msgid = $(sender).attr('id');
-    var loc = {
-        x: $(sender).css('left'),
-        y: $(sender).css('top')
-    }
-    var msg = {
-        id: msgid,
-        body: $('#m').val(),
-        location: loc
-    }
-    cacheOwnedMessage(msg);
-}
-
 function getMessage(id){
     var _loc = {
         x: $('#' + id).css('left'),
@@ -225,7 +225,8 @@ function getMessage(id){
         body: $('#' + id).find('textarea').val(),
         location: _loc,
         size: _size,
-        color: $('#' + id).data('color')
+        color: $('#' + id).data('color'),
+        topic: $('#' + id).data('topic')
     }
     return msg;
 }
@@ -237,9 +238,10 @@ function populate(msgcoll){
         var _setting = this;
         getSetting(_setting);
     })
+    var refresh_endpoint = '/refresh' + '?topic=' + topic;
     var posts = $.ajax({
         type: 'GET',
-        url: '/refresh',
+        url: refresh_endpoint,
         data: (token) ? token : null,
         dataType: 'html'
     });
@@ -265,8 +267,17 @@ function populate(msgcoll){
     posts.always(function () {
         debouncing = false;
         refreshDraggables();
+        setTitle(topic);
     })
 
+}
+
+function setTitle(_title){
+    if(_title === 'message'){
+        _title = 'Home'
+    }
+    $('#title').text(_title);
+    $('#titleblock').show();
 }
 
 function refreshDraggables(){
@@ -309,6 +320,7 @@ function finishEditing(_id, discard = null) {
     }
     copyBody(_id);
     $(id).data('color', $(id).data('temp-color'));
+    $(id).data('topic', topic);
     var message = getMessage(_id);
 
     if($(id).hasClass('unsubmitted')){

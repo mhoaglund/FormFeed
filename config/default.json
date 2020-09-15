@@ -3,7 +3,7 @@
         "blobaccount":"formfeeddata",
         "blobcontainer":"formfeedblob",
         "tablecontainer":"formfeedtable",
-        "contentkey":"message",
+        "homekey":"message",
         "logkey":"history",
         "settingskey": "settings",
         "maxentities":500,

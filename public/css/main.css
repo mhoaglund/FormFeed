@@ -7,14 +7,32 @@ a{
     cursor: pointer;
 }
 
-a, p, textarea{
+a, p, textarea, h1{
     font-family: 'Courier New',Courier,monospace;
+}
+
+h1{
+    font-weight: 300;
 }
 
 #ground{
     width: 3000px;
     height: 3000px;
     background: gainsboro;
+}
+
+#titleblock{
+    display: none;
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    z-index: 9999;
+    box-shadow: 0px 0px 5px white;
+    background-color: white;
+    color: grey;
+    padding: 5px;
+    padding-left: 8px;
+    padding-right: 8px;
 }
 
 div{

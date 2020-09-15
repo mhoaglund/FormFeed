@@ -23,7 +23,11 @@ app.get('/refresh', (req,res) => {
             targetLocation: Number(req.query.targetLocation)
         }
     }
-    let posts = asHandler.getEntities(clienttoken, function (reply, token) {
+    var topic = "message"; //the generic topic for 'home'
+    if(req.query.topic){
+        topic = req.query.topic;
+    }
+    let posts = asHandler.getEntities(clienttoken, topic, function (reply, token) {
         if (token) {
             res.append("Continuation-Token", JSON.stringify(token));
         }

@@ -20,37 +20,6 @@ function newRowKey(){
     return invertedTicks;
 }
 
-// deprecated
-module.exports.Import = function(_payload, _cb){
-    // var msg = {
-    //     id: id,
-    //     body: $('#' + id).find('textarea').val(),
-    //     location: _loc,
-    //     size: _size
-    // }
-    var date = new Date();
-    var rk = newRowKey();
-    var now_utc = Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate(),
-        date.getUTCHours(), date.getUTCMinutes(), date.getUTCSeconds());
-    var _row = {
-        PartitionKey: entGen.String(config.get('appconfig.contentkey')),
-        RowKey: entGen.String(rk),
-        uploaded: entGen.DateTime(new Date(now_utc)),
-        ident: entGen.String(_payload.id),
-        body: entGen.String(_payload.body),
-        location: entGen.String(JSON.stringify(_payload.location)),
-        size: entGen.String(JSON.stringify(_payload.size))
-    }
-    tableUpload(_row, function(result){
-        keyMap.push({
-            id: _payload.id,
-            rowKey: rk
-        })
-        console.log(keyMap)
-        _cb(result);
-    })
-}
-
 module.exports.Update = function(_payload, _cb){
     let found = keyMap.find(o => o.id === _payload.id);
     var rk;
@@ -70,8 +39,12 @@ module.exports.Update = function(_payload, _cb){
         op = 'edit'
         console.log('Updating existing entity...')
     }
+    var topic = config.get('appconfig.homekey');
+    if(_payload.topic){
+        topic = _payload.topic
+    }
     var _row = {
-        PartitionKey: entGen.String(config.get('appconfig.contentkey')),
+        PartitionKey: entGen.String(topic),
         RowKey: entGen.String(rk),
         uploaded: entGen.DateTime(new Date(now_utc)),
         ident: entGen.String(_payload.id),
@@ -100,10 +73,10 @@ function log(_row, _op){
 }
 
 //Continuation token stuff: https://coderead.wordpress.com/2012/08/20/handling-continuation-tokens-with-node-js-on-windows-azure-table-storage/
-module.exports.getEntities = function (_clienttoken = null, _cb) {
+module.exports.getEntities = function (_clienttoken = null, _topic = config.get('appconfig.homekey'), _cb) {
     var query = new azure.TableQuery()
         .top(config.get('appconfig.maxentities'))
-        .where('PartitionKey eq ?', config.get('appconfig.contentkey'));
+        .where('PartitionKey eq ?', _topic);
 
     tableService.queryEntities(config.get('appconfig.tablecontainer'), query, _clienttoken,{payloadFormat:"application/json;odata=nometadata"}, function (error, result, response) {
         if (!error) {

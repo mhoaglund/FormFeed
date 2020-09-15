@@ -31,6 +31,13 @@ $(function () {
         startMessageAtLocation(e);
     });
 
+    $(document).on("click", '#alert', function (e) {
+        e.stopPropagation();
+        displayAlert();
+        //TODO visual alert with css animation and possible event broadcast
+    });
+
+
     $(document).on("click", '.message', function (e) {
         e.stopPropagation();
     });
@@ -147,6 +154,10 @@ function buildHTMLMessage(id, x, y){
         '</div>' +
         '<div class="showpanel"><p class="msgbody"></p><div><a id="editlink">Edit</a></div></div>' +
         '</div>';
+}
+
+function displayAlert(){
+
 }
 
 function getSetting(setting, _cb = null){

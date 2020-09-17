@@ -11,6 +11,9 @@ $(function () {
     });
 
     socket.on('create_message', function (msg) {
+        if(msg.topic !== topic){
+            return;
+        }
         if($('#'+msg.id).length){
             console.log("Already have this one somehow.");
             return;
@@ -25,6 +28,9 @@ $(function () {
     });
 
     socket.on('update_message', function (msg) {
+        if (msg.topic !== topic) {
+            return;
+        }
         if (!$('#' + msg.id).length) {
             console.log("This message was missing. Creating...");
             createMessageAtLocation(msg);
@@ -274,6 +280,7 @@ function clearUnsubmitted(){
 }
 
 function getMessage(id){
+    var _topic = topic;
     var _loc = {
         x: $('#' + id).css('left'),
         y: $('#' + id).css('top')
@@ -288,7 +295,7 @@ function getMessage(id){
         location: _loc,
         size: _size,
         color: $('#' + id).data('color'),
-        topic: $('#' + id).data('topic'),
+        topic: _topic,
         depth: $('#' + id).data('depth')
     }
     return msg;

@@ -20,6 +20,28 @@ function newRowKey(){
     return invertedTicks;
 }
 
+module.exports.Alert = function(_payload, _cb){
+    var op = 'new';
+    var rk = newRowKey();
+    var date = new Date();
+    var now_utc = Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate(),
+        date.getUTCHours(), date.getUTCMinutes(), date.getUTCSeconds());
+    var topic = config.get('appconfig.homekey');
+    if (_payload.topic) {
+        topic = _payload.topic
+    }
+    var _row = {
+        PartitionKey: entGen.String("alert"),
+        RowKey: entGen.String(rk),
+        uploaded: entGen.DateTime(new Date(now_utc)),
+        body: entGen.String(_payload.topic),
+    }
+    tableInsertOrReplace(_row, function (result) {
+        log(_row, op)
+        _cb(result);
+    })
+}
+
 module.exports.Update = function(_payload, _cb){
     let found = keyMap.find(o => o.id === _payload.id);
     var rk;
@@ -51,7 +73,8 @@ module.exports.Update = function(_payload, _cb){
         body: entGen.String(_payload.body),
         location: entGen.String(JSON.stringify(_payload.location)),
         size: entGen.String(JSON.stringify(_payload.size)),
-        color: entGen.String(_payload.color)
+        color: entGen.String(_payload.color),
+        depth: entGen.String(_payload.depth)
     }
     
     tableInsertOrReplace(_row, function(result){

@@ -7,7 +7,12 @@ a{
     cursor: pointer;
 }
 
-a, p, textarea, h1{
+a,
+p,
+textarea,
+h1,
+span,
+#depth_indicator {
     font-family: 'Courier New',Courier,monospace;
 }
 
@@ -19,6 +24,12 @@ h1{
     width: 3000px;
     height: 3000px;
     background: gainsboro;
+}
+
+#ground.alerted{
+        animation:brighten 5s;
+        animation-iteration-count: 1;
+        animation-fill-mode: forwards;
 }
 
 #titleblock{
@@ -43,6 +54,21 @@ h1{
     box-shadow: 0px 0px 5px #6495ed;
     color: white;
 
+}
+
+#depth_indicator{
+    position: absolute;
+    right: -3rem;
+    top: -3px;
+    width: 3rem;
+    height: 2rem;
+    background: gainsboro;
+    text-align: center;
+    border-top: 2px solid grey;
+    border-right: 2px solid grey;
+    border-bottom: 2px solid grey;
+    border-radius: 2px;
+    line-height: 1.8rem;
 }
 
 #alert{
@@ -132,7 +158,22 @@ div{
     margin-left: 1rem;
 }
 
-.editpanel > div.colors-picker{
+.depth-picker-item {
+    display: block;
+    border-radius: 5px;
+    padding: 0.5rem;
+    border: 1px solid gray;
+    margin-left: 1rem;
+    text-align: center;
+    cursor: pointer;
+}
+
+.depth-picker-item span{
+    display: block;
+}
+
+.editpanel > div.colors-picker,
+.editpanel > div.depths-picker{
     justify-content: flex-end;
 }
 /* Color Palette */
@@ -180,6 +221,18 @@ div{
     }
 
     100% {
-        background: #dcdcdc;
+        background: #e7e7e7;
+    }
+}
+
+@-webkit-keyframes brighten {
+
+    from,
+    to {
+        background: gainsboro;
+    }
+
+    100% {
+        background: #fffeea;
     }
 }

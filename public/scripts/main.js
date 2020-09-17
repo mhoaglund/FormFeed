@@ -18,6 +18,12 @@ $(function () {
         createMessageAtLocation(msg);
     });
 
+    socket.on('alert', function (msg) {
+        if(msg === topic){
+            displayAlert();
+        }
+    });
+
     socket.on('update_message', function (msg) {
         if (!$('#' + msg.id).length) {
             console.log("This message was missing. Creating...");
@@ -33,6 +39,7 @@ $(function () {
 
     $(document).on("click", '#alert', function (e) {
         e.stopPropagation();
+        socket.emit('alert', topic);
         displayAlert();
         //TODO visual alert with css animation and possible event broadcast
     });
@@ -64,6 +71,28 @@ $(function () {
         var parent = $(this).parents('.message');
         parent.data('temp-color', color);
         setColor(parent, parent.data('temp-color'));
+    });
+
+    $(document).on("click", '.depth-picker-item', function (e) {
+        e.stopPropagation();
+        var depth = $(this).attr('id');
+        var parent = $(this).parents('.message');
+        var current_depth = parent.data('temp-depth');
+
+        if (depth === 'up' && current_depth < 1000) {
+            current_depth += 1;
+        }
+        if (depth === 'down' && current_depth > 0) {
+            current_depth -= 1;
+        }
+        if (depth === 'top') {
+            current_depth = 1000;
+        }
+        if (depth === 'btm'){
+            current_depth = 0;
+        }
+        parent.data('temp-depth', current_depth);
+        setDepth(parent, parent.data('temp-depth'));
     });
 
     $(document).on("click", '#submitlink', function (e) {
@@ -111,7 +140,7 @@ function getParameterByName(name, url) {
 myMessages = []
 mySettings = []
 _mySettings = {}
-myExpectedSettings = ['colors', 'types']
+myExpectedSettings = ['colors', 'types', 'depths']
 
 //Update the view with a new message stub+textarea, send message to server to emit
 function startMessageAtLocation(e){
@@ -130,6 +159,9 @@ function createMessageAtLocation(msg){
     var html = buildHTMLMessage(msg.id, msg.location.x, msg.location.y);
     $('#ground').append(html);
     var _id = '#' + msg.id;
+    if(!msg.depth) {
+        msg.depth = 0;
+    }
     $(_id +' .editpanel textarea').width(msg.size.wd).height(msg.size.ht);
     $(_id +' .showpanel p.msgbody').width(msg.size.wd).height(msg.size.ht);
     $(_id +' .showpanel p.msgbody').text(msg.body);
@@ -138,7 +170,11 @@ function createMessageAtLocation(msg){
     $(_id).data('dheight', msg.size.ht);
     $(_id).data('color', msg.color);
     $(_id).data('topic',msg.topic);
+    $(_id).data('depth', msg.depth);
+    $(_id).data('temp-depth', msg.depth);
     $(_id).addClass(msg.color);
+    $(_id).css({'z-index': msg.depth});
+    $(_id + ' #depth_indicator').text(msg.depth);
     refreshDraggables();
 }
 
@@ -147,6 +183,7 @@ function buildHTMLMessage(id, x, y){
         id + '" style="left:' +
         x + '; top:' +
         y + '">' +
+        '<aside id="depth_indicator">0</aside>'+
         '<div class="editpanel">' +
         '<textarea></textarea>' +
         '<div><a id="submitlink">Submit</a><a id="discardlink">Discard</a></div>' +
@@ -157,7 +194,7 @@ function buildHTMLMessage(id, x, y){
 }
 
 function displayAlert(){
-
+    $('#ground').addClass('alerted');
 }
 
 function getSetting(setting, _cb = null){
@@ -185,6 +222,13 @@ function buildSettingsInterface(){
             });
             html += '</div>'
         }
+        if(setting.RowKey == 'depths') {
+            html += '<div class="' + setting.RowKey + '-picker">'
+            arrFromCSL(setting.body).forEach(function (item) {
+                html += '<div class="depth-picker-item ' + item + '" id="' + item + '"><span>'+ item +'</span></div>'
+            });
+            html += '</div>'
+        }
     })
     return html;
 }
@@ -196,7 +240,9 @@ function updateMessage(msg){
     });
     reset_animation(msg.id);
     $('#' + msg.id).data('color',msg.color);
+    $('#' + msg.id).data('depth', msg.depth);
     setColor($('#' + msg.id), $('#' + msg.id).data('color'));
+    setDepth($('#' + msg.id), $('#' + msg.id).data('depth'));
     $('#' + msg.id + ' .editpanel textarea').width(msg.size.wd).height(msg.size.ht);
     $('#' + msg.id + ' .showpanel p.msgbody').width(msg.size.wd).height(msg.size.ht);
 
@@ -218,6 +264,11 @@ function setColor(sender, _color){
     sender.addClass(_color);
 }
 
+function setDepth(sender, _zind) {
+    sender.css({'z-index': _zind});
+    $(sender).find('#depth_indicator').text(_zind);
+}
+
 function clearUnsubmitted(){
     $('.unsubmitted').remove();
 }
@@ -237,7 +288,8 @@ function getMessage(id){
         location: _loc,
         size: _size,
         color: $('#' + id).data('color'),
-        topic: $('#' + id).data('topic')
+        topic: $('#' + id).data('topic'),
+        depth: $('#' + id).data('depth')
     }
     return msg;
 }
@@ -316,12 +368,6 @@ function startEditing(sender){
     sender.addClass('editing');
 }
 
-// function removeMessage(sender){
-//     if (!sender.hasClass('unsubmitted')){
-//         socket.emit('update', getMessage(event.target.id));
-//     }
-// }
-
 function finishEditing(_id, discard = null) {
     var id = '#' + _id;
     if(discard){
@@ -330,8 +376,9 @@ function finishEditing(_id, discard = null) {
         return;
     }
     copyBody(_id);
-    $(id).data('color', $(id).data('temp-color'));
+    $(id).data('color', $(id).data('temp-color')); //Save the selected color
     $(id).data('topic', topic);
+    $(id).data('depth', $(id).data('temp-depth'));
     var message = getMessage(_id);
 
     if($(id).hasClass('unsubmitted')){
@@ -358,6 +405,7 @@ function discardChanges(_id){
     } else {
         $(id + ' .editpanel textarea').val($(id + ' .showpanel p.msgbody').html());
         setColor($(id), $(id).data('color'));
+        setDepth($(id), $(id).data('depth'));
     }
 }
 

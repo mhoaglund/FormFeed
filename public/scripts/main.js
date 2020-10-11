@@ -22,8 +22,8 @@ $(function () {
     });
 
     socket.on('alert', function (msg) {
-        if(msg === topic){
-            displayAlert();
+        if (msg.topic === 'alert_' + topic) {
+            displayAlert(msg.body);
         }
     });
 
@@ -43,16 +43,19 @@ $(function () {
         startMessageAtLocation(e);
     });
 
-    $(document).on("click", '#alert', function (e) {
+    $(document).on("click", '#alertbtn', function (e) {
         e.stopPropagation();
-        socket.emit('alert', topic);
-        displayAlert();
-        //TODO visual alert with css animation and possible event broadcast
+        toggleAlertInterface();
     });
 
 
     $(document).on("click", '.message', function (e) {
         e.stopPropagation();
+    });
+
+    $(document).on("click", '#closealert', function (e) {
+        e.stopPropagation();
+        clearAlert();
     });
 
     $(document).on("click", '#editlink', function (e) {
@@ -66,8 +69,13 @@ $(function () {
     $(document).on("click", '#discardlink', function (e) {
         e.stopPropagation();
         var msgparent = $(this).parents('.message');
-        if (msgparent) {
+        if (msgparent.length > 0) {
             discardChanges(msgparent.attr('id'));
+        } else {
+            msgparent = $(this).parents('#alertblock');
+            if (msgparent.length > 0) {
+                toggleAlertInterface(true);
+            }
         }
     });
 
@@ -105,8 +113,13 @@ $(function () {
         e.stopPropagation();
         //TODO locate message parent and get id value to finish editing
         var msgparent = $(this).parents('.message');
-        if(msgparent){
+        if (msgparent.length > 0) {
             finishEditing(msgparent.attr('id'));
+        } else {
+            msgparent = $(this).parents('#alertblock');
+            if (msgparent.length > 0) {
+                sendAlert();
+            }
         }
     });
 
@@ -199,8 +212,19 @@ function buildHTMLMessage(id, x, y){
         '</div>';
 }
 
-function displayAlert(){
+function displayAlert(alert){
     $('#ground').addClass('alerted');
+    $('#showalert').show();
+    if(alert === ''){
+        alert = '---'
+    }
+    $('#showalert h1').html(alert);
+}
+
+function clearAlert(){
+    $('#ground').removeClass('alerted');
+    $('#showalert').hide();
+    $('#showalert h1').html('');
 }
 
 function getSetting(setting, _cb = null){
@@ -237,6 +261,24 @@ function buildSettingsInterface(){
         }
     })
     return html;
+}
+
+alertOpen = false;
+function toggleAlertInterface(_clear){
+    if (_clear) {
+        $('#alertblock .editpanel textarea').val('');
+    }
+    if (!alertOpen) {
+        $('#alertblock .editpanel').show();
+        alertOpen = true;
+        return;
+    } 
+    if (alertOpen){
+        $('#alertblock .editpanel').hide();
+        alertOpen = false;
+        return;
+    }
+
 }
 
 function updateMessage(msg){
@@ -397,6 +439,14 @@ function finishEditing(_id, discard = null) {
     $(id).removeClass('editing');
     reset_animation(_id);
     cacheOwnedMessage(message);
+}
+
+function sendAlert(){
+    socket.emit('alert', {
+        'topic': 'alert_' + topic,
+        'body': $('#alertblock .editpanel textarea').val()
+    });
+    toggleAlertInterface(true);
 }
 
 function arrFromCSL(_csl, del = ','){

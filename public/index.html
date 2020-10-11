@@ -60,10 +60,17 @@
         <h1 id="title"></h1>
     </aside>
     <aside id="alertblock">
-        <a id="alert">
-            <h1>Alert</h1>
-        </a>
+        <div id="alert">
+            <a id="alertbtn">
+                <h1>Alert</h1>
+                <h1>...</h1>
+            </a>
+            <div class="editpanel"><textarea style="width: 200px; height: 60px;"></textarea>
+                <div><a id="submitlink">Submit</a><a id="discardlink">Discard</a></div>
+            </div>
+        </div>
     </aside>
+    <aside id="showalert"><h1></h1><a id="closealert">X</a></aside>
     <script src="/socket.io/socket.io.js"></script>
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>

@@ -31,10 +31,10 @@ module.exports.Alert = function(_payload, _cb){
         topic = _payload.topic
     }
     var _row = {
-        PartitionKey: entGen.String("alert"),
+        PartitionKey: entGen.String(topic),
         RowKey: entGen.String(rk),
         uploaded: entGen.DateTime(new Date(now_utc)),
-        body: entGen.String(_payload.topic),
+        body: entGen.String(_payload.body),
     }
     tableInsertOrReplace(_row, function (result) {
         log(_row, op)

@@ -68,7 +68,7 @@ io.on('connection', (socket) => {
     });
     socket.on('alert', (msg) => {
         console.log('Received Alert');
-        socket.broadcast.emit('alert', msg);
+        io.emit('alert', msg);
         asHandler.Alert(msg, function(){
             console.log('recorded an alert.')
         })

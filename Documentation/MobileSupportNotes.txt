@@ -1,0 +1,7 @@
+Mobile Support:
+-This may already work okay on mobile. Need to run tests.
+
+To look out for:
+-The keyboard shit. Need a real resolution to that, it's been a problem before.
+-The viewport and the size of the text. It all has to stay in proportion so it has parity and makes sense.
+-Interface for scrubbing (eventual enhancement)

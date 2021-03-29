@@ -1,0 +1,6 @@
+Token Authentication:
+-We want to anonymously authenticate users by device. We want to give out a token on successful... confirmation or whatever.
+-token-bearing users can write to the site, basically. Can we associate tokens with rooms? Maybe one day?
+-I can delete tokens whenever I need to.
+-tokens are never associated with PII, but we track when they were created and how much usage they get.
+-"Underground Access" method here- we will share tokens through some lo-fi means. I send you a token, and something something. How do we keep these tokens from being stolen or shared? Also don't want this to be complex.

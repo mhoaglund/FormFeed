@@ -1,0 +1,2 @@
+Admin Stuff
+-Some tokens need admin assignment. these admins need to be able to open or close rooms.

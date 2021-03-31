@@ -83,15 +83,19 @@ module.exports.Update = function(_payload, _cb){
     })
 }
 
+//logging deltas for later playback.
+//Every room partition has a history partition, so we can grab both and zip them up
+//by natural keys.
 function log(_row, _op){
-    var relates_to = _row.RowKey;
+    var parentID = _row.RowKey;
+    var homePartition = _row.PartitionKey;
     var _rk = newRowKey();
-    _row.PartitionKey = entGen.String(config.get('appconfig.logkey'))
+    _row.PartitionKey = entGen.String(config.get('appconfig.logkey') + "_" + homePartition);
     _row.RowKey = entGen.String(_rk)
-    _row.RelatesTo = entGen.String(relates_to._)
+    _row.parentID = entGen.String(parentID._) //this underscore thing is baffling, check in on it
     _row.Event = entGen.String(_op)
     tableUpload(_row, function(){
-        console.log("Completed logging operation")
+        console.log("Captured a delta.")
     })
 }
 

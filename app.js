@@ -54,24 +54,24 @@ io.on('connection', (socket) => {
     });
     socket.on('submit', (msg) => {
         console.log('created message: ' + msg.id);
-        // socket.broadcast.emit('create_message', msg);
-        // asHandler.Update(msg, function () {
-        //     console.log('uploaded.')
-        // });
+        socket.broadcast.emit('create_message', msg);
+        asHandler.Update(msg, function () {
+            console.log('uploaded.')
+        });
     });
     socket.on('update', (msg) =>{
         console.log('updated message: ' + msg.id);
-        // socket.broadcast.emit('update_message', msg);
-        // asHandler.Update(msg, function () {
-        //     console.log('updated.')
-        // });
+        socket.broadcast.emit('update_message', msg);
+        asHandler.Update(msg, function () {
+            console.log('updated.')
+        });
     });
     socket.on('alert', (msg) => {
         console.log('Received Alert');
-        // io.emit('alert', msg);
-        // asHandler.Alert(msg, function(){
-        //     console.log('recorded an alert.')
-        // })
+        io.emit('alert', msg);
+        asHandler.Alert(msg, function(){
+            console.log('recorded an alert.')
+        })
     });
 });
 

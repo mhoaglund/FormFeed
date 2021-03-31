@@ -2,9 +2,9 @@
     "appconfig":{
         "blobaccount":"formfeeddata",
         "blobcontainer":"formfeedblob",
-        "tablecontainer":"formfeedtable",
+        "tablecontainer":"formfeedtimeseriestable",
         "homekey":"message",
-        "logkey":"history",
+        "logkey":"h",
         "settingskey": "settings",
         "maxentities":500,
         "dbconfig":{

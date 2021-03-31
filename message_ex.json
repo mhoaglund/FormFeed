@@ -1,0 +1,32 @@
+{
+    "message":{
+        "partitionKey":"RoomName",
+        "rowKey":"0000000012",
+        "timestamp":"00:00:00:0000",
+        "body":"test message",
+        "uploaded":"00:00:00:0000",
+        "location":{"x":100, "y":100, "z":100},
+        "size":{"x":999, "7": 999},
+        "ident":"dddd99-dd99ddd-d999d9-d999d"
+    },
+    "delta":{
+        "partitionKey":"h_RoomName",
+        "rowKey":"0000000016",
+        "timestamp":"00:00:00:0100",
+        "body":"MY test message",
+        "location":{"x":100, "y":100, "z":100},
+        "size":{"x":999, "7": 999},
+        "ident":"dddd99-dd99ddd-d999d9-d999d",
+        "parentID":"0000000012"
+    },
+    "rollup":[
+        {
+            "timestamp":"00:00:00:0000",
+            "rowKey":"0000000016"
+        },
+        {
+            "timestamp":"00:00:00:0100",
+            "rowKey":"0000000018"
+        }
+    ]
+}

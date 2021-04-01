@@ -3,8 +3,10 @@ var express = require('express');
 var http = require('http').createServer(app);
 var io = require('socket.io')(http);
 var path = require('path');
+var async = require('async');
 //const asHandler = require('azureServiceHandler.js');
 const asHandler = require(__dirname + '/azureServiceHandler.js')
+const masseuse = require(__dirname + '/masseuse.js')
 
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -15,6 +17,31 @@ app.get('/', (req, res) => {
     res.sendFile(__dirname + '/index.html');
 });
 
+app.get('/renderall', (req, res) => {
+    var topic = config.get('appconfig.homekey'); //the generic topic for 'home'
+    if(req.query.topic){
+        topic = req.query.topic;
+    }// an example using an object instead of an array
+    var delta_topic = config.get('appconfig.logkey') + "_" + topic;
+    async.parallel({
+        main: function(callback) {
+            let posts = asHandler.getAllEntities(topic, function (reply) {
+                callback(null, reply);
+            });
+        },
+        deltas: function(callback) {
+            let posts = asHandler.getAllEntities(delta_topic, function (reply) {
+                callback(null, reply);
+            });
+        }
+    }, function(err, results) {
+        // results is now equals to: {one: 1, two: 2}
+        masseuse.renderTimeSeries(results, function(series){
+            res.send(series);
+        })
+    });
+})
+
 app.get('/refresh', (req,res) => {
     if (req.query.nextRowKey) {
         var clienttoken = {
@@ -23,6 +50,8 @@ app.get('/refresh', (req,res) => {
             targetLocation: Number(req.query.targetLocation)
         }
     }
+    //TODO: we have half the continuation token stuff here, but not all of it.
+    //We don't really want to let the client keep looping. It should happen here.
     var topic = config.get('appconfig.homekey'); //the generic topic for 'home'
     if(req.query.topic){
         topic = req.query.topic;

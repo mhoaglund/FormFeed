@@ -131,6 +131,43 @@ module.exports.getEntities = function (_clienttoken = null, _topic = config.get(
     //TODO update rowkey dictionary locally
 }
 
+//Get every entity in a partition, running through as many pages as necessary.
+module.exports.getAllEntities = function (_topic = config.get('appconfig.homekey'), _cb){
+    var query = new azure.TableQuery()
+        .top(config.get('appconfig.maxentities'))
+        .where('PartitionKey eq ?', _topic);
+
+    const all_results = [];
+    let finished = false;
+    var clienttoken = null;
+    
+    async.until((cb) => {
+        //this test function is called first.
+        cb(null, finished)
+    }, (cb) => {
+        tableService.queryEntities(config.get('appconfig.tablecontainer'), query, clienttoken,{payloadFormat:"application/json;odata=nometadata"}, function (error, result, response) {
+            if (!error) {
+                console.log("Iteration from the paginated request loop...");
+                if (result.continuationToken) {
+                    clienttoken = result.continuationToken;
+                    finished = false;
+                } else {
+                    finished = true;
+                    console.log("Looks like we got it all!");
+                }
+                response.body.value.forEach(function(entity){
+                    all_results.push(entity);
+                })
+                cb()
+            } else {
+                cb(null, true);
+            }
+        });
+    }, () => {
+        _cb(all_results);
+    })
+}
+
 module.exports.getEntity = function (_rowKey, _cb, partition = 'message') {
     var query = new azure.TableQuery()
         .top(1)

@@ -23,7 +23,7 @@ app.get('/refresh', (req,res) => {
             targetLocation: Number(req.query.targetLocation)
         }
     }
-    var topic = "message"; //the generic topic for 'home'
+    var topic = config.get('appconfig.homekey'); //the generic topic for 'home'
     if(req.query.topic){
         topic = req.query.topic;
     }

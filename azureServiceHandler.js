@@ -20,6 +20,8 @@ function newRowKey(){
     return invertedTicks;
 }
 
+
+//TODO: redo
 module.exports.Alert = function(_payload, _cb){
     var op = 'new';
     var rk = newRowKey();
@@ -88,7 +90,7 @@ module.exports.Update = function(_payload, _cb){
 //by natural keys.
 function log(_row, _op){
     var parentID = _row.RowKey;
-    var homePartition = _row.PartitionKey;
+    var homePartition = _row.PartitionKey._;
     var _rk = newRowKey();
     _row.PartitionKey = entGen.String(config.get('appconfig.logkey') + "_" + homePartition);
     _row.RowKey = entGen.String(_rk)

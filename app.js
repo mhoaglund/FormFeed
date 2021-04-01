@@ -43,26 +43,13 @@ app.get('/renderall', (req, res) => {
 })
 
 app.get('/refresh', (req,res) => {
-    if (req.query.nextRowKey) {
-        var clienttoken = {
-            nextRowKey: req.query.nextRowKey,
-            nextPartitionKey: req.query.nextPartitionKey,
-            targetLocation: Number(req.query.targetLocation)
-        }
-    }
-    //TODO: we have half the continuation token stuff here, but not all of it.
-    //We don't really want to let the client keep looping. It should happen here.
+    //TODO: refactor to use getallentities, don't bother with the header
     var topic = config.get('appconfig.homekey'); //the generic topic for 'home'
     if(req.query.topic){
         topic = req.query.topic;
     }
-    let posts = asHandler.getEntities(clienttoken, topic, function (reply, token) {
-        if (token) {
-            res.append("Continuation-Token", JSON.stringify(token));
-        }
-        res.send({
-            reply
-        });
+    let posts = asHandler.getAllEntities(topic, function (reply) {
+        res.send({reply});
     });
 })
 

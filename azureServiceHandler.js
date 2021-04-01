@@ -164,7 +164,7 @@ module.exports.getAllEntities = function (_topic = config.get('appconfig.homekey
             }
         });
     }, () => {
-        _cb(all_results);
+        _cb({"value":all_results});
     })
 }
 

@@ -6,7 +6,7 @@
         "homekey":"home",
         "logkey":"h",
         "settingskey": "settings",
-        "maxentities":5,
+        "maxentities":100,
         "dbconfig":{
             "host":"",
             "port":"",

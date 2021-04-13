@@ -2,10 +2,14 @@ Scrubbable conversations:
 
 The data:
 -"Source messages" have banded relationships with modifications or deltas, which can apply to any property. Already in place.
-	-"Message Deltas" have from-to property mods and timestamps.
+
+-"Message Deltas" have from-to property mods and timestamps.
+
 -We "pre-load" a rooms' worth of this data at a time on the server. Right now, this loading process doesn't come with time filtering functionality, you just get the whole history of the room.
+
 -We send this preloaded room data to the client as a network json object. Msg natural keys link out to banded delta messages. For performance, the data probably needs a "hash table" type thing for locating message deltas in time- this could be a computed property on each source message.
--We should create a computed field on the JSON which is an "overall-time-seris" table of deltas and their timestamps, which we can loop through on the client.
+
+-We should create a computed field on the JSON which is an "overall-time-series" table of deltas and their timestamps, which we can loop through on the client.
 
 The client:
 -The client needs a time series scrubber or navigator, this will produce a factor value that we can use to apply to a known IRL time range from the data.

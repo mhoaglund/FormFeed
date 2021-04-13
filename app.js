@@ -1,5 +1,5 @@
 var app = require('express')();
-var express = require('express');
+var express = require('express'), passport = require('passport');
 var http = require('http').createServer(app);
 var io = require('socket.io')(http);
 var path = require('path');
@@ -12,6 +12,17 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 const config = require('config');
 const app_config = config.get('appconfig');
+
+//TODO complete this somehow with some keycode verification
+import passportCustom from 'passport-custom';
+const CustomStrategy = passportCustom.Strategy;
+ 
+passport.use('strategy-name', new CustomStrategy(
+  function(req, callback) {
+    // Do your custom user finding logic here, or set to false based on req object
+    callback(null, user);
+  }
+));
 
 app.get('/', (req, res) => {
     res.sendFile(__dirname + '/index.html');

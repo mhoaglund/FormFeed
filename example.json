@@ -1,118 +1,4 @@
 {
-    "main": {
-        "value": [
-            {
-                "PartitionKey": "new",
-                "RowKey": "00008638382758461822",
-                "Timestamp": "2021-04-01T01:45:38.8115668Z",
-                "body": "Conch Concordance",
-                "color": "none",
-                "ident": "a9eeb17c-d2b2-4d2e-b759-d45c3da44a73",
-                "location": "{\"x\":\"709px\",\"y\":\"720px\"}",
-                "size": "{\"wd\":177,\"ht\":30}",
-                "uploaded": "2021-04-01T01:45:38Z"
-            },
-            {
-                "PartitionKey": "new",
-                "RowKey": "00008638382758472698",
-                "Timestamp": "2021-04-01T01:45:27.9348772Z",
-                "body": "Conch chord",
-                "color": "none",
-                "ident": "c9e134ed-f2b1-4db3-81b3-ab17aa6dbb8f",
-                "location": "{\"x\":\"709px\",\"y\":\"610.5px\"}",
-                "size": "{\"wd\":177,\"ht\":30}",
-                "uploaded": "2021-04-01T01:45:27Z"
-            },
-            {
-                "PartitionKey": "new",
-                "RowKey": "00008638382758480652",
-                "Timestamp": "2021-04-01T01:45:19.9782549Z",
-                "body": "Conch core",
-                "color": "none",
-                "ident": "ecb52f7c-352d-42c1-8f10-0879aeb9b721",
-                "location": "{\"x\":\"708.5px\",\"y\":\"499.5px\"}",
-                "size": "{\"wd\":177,\"ht\":30}",
-                "uploaded": "2021-04-01T01:45:19Z"
-            },
-            {
-                "PartitionKey": "new",
-                "RowKey": "00008638382758507082",
-                "Timestamp": "2021-04-01T01:44:55.5279759Z",
-                "body": "Conned, Corded, Data",
-                "color": "none",
-                "ident": "03636da2-e9b8-4975-b99b-b1831035fa46",
-                "location": "{\"x\":\"218px\",\"y\":\"395px\"}",
-                "size": "{\"wd\":177,\"ht\":30}",
-                "uploaded": "2021-04-01T01:44:54Z"
-            },
-            {
-                "PartitionKey": "new",
-                "RowKey": "00008638382758514793",
-                "Timestamp": "2021-04-01T01:44:57.1941523Z",
-                "body": "Conned, Corded",
-                "color": "none",
-                "ident": "a6ca0950-91ae-416f-96e2-e7ee5d6c8d5f",
-                "location": "{\"x\":\"215px\",\"y\":\"282.5px\"}",
-                "size": "{\"wd\":177,\"ht\":30}",
-                "uploaded": "2021-04-01T01:44:56Z"
-            },
-            {
-                "PartitionKey": "new",
-                "RowKey": "00008638382758523316",
-                "Timestamp": "2021-04-01T01:44:58.611153Z",
-                "body": "Conned Core",
-                "color": "none",
-                "ident": "820bf184-7b46-4269-8ea4-2a8b60c1ba2b",
-                "location": "{\"x\":\"215.5px\",\"y\":\"171.5px\"}",
-                "size": "{\"wd\":177,\"ht\":30}",
-                "uploaded": "2021-04-01T01:44:57Z"
-            },
-            {
-                "PartitionKey": "new",
-                "RowKey": "00008638382758530761",
-                "Timestamp": "2021-04-01T01:45:06.7649146Z",
-                "body": "Con Cor Date",
-                "color": "none",
-                "ident": "8c7c2149-6a2e-4ea0-85be-4046a8763567",
-                "location": "{\"x\":\"495px\",\"y\":\"396px\"}",
-                "size": "{\"wd\":177,\"ht\":30}",
-                "uploaded": "2021-04-01T01:45:06Z"
-            },
-            {
-                "PartitionKey": "new",
-                "RowKey": "00008638382758539134",
-                "Timestamp": "2021-04-01T01:45:04.6053902Z",
-                "body": "Concordat",
-                "color": "none",
-                "ident": "ce285fdb-79cc-45d1-af69-0594d3425c10",
-                "location": "{\"x\":\"496.5px\",\"y\":\"281px\"}",
-                "size": "{\"wd\":177,\"ht\":30}",
-                "uploaded": "2021-04-01T01:45:03Z"
-            },
-            {
-                "PartitionKey": "new",
-                "RowKey": "00008638382758546323",
-                "Timestamp": "2021-04-01T01:45:02.151653Z",
-                "body": "Concord",
-                "color": "none",
-                "ident": "da0cec10-4ca4-4e97-abd4-0f786c4ab3e9",
-                "location": "{\"x\":\"498px\",\"y\":\"172px\"}",
-                "size": "{\"wd\":177,\"ht\":30}",
-                "uploaded": "2021-04-01T01:45:01Z"
-            },
-            {
-                "PartitionKey": "new",
-                "RowKey": "00008638382759040778",
-                "Timestamp": "2021-04-01T01:36:09.5967846Z",
-                "body": "ytest",
-                "color": "none",
-                "ident": "9f2598f2-b930-49ce-b37b-9fde807245de",
-                "location": "{\"x\":\"948.5px\",\"y\":\"329px\"}",
-                "size": "{\"wd\":177,\"ht\":30}",
-                "uploaded": "2021-04-01T01:36:08Z"
-            }
-        ]
-    },
     "deltas": {
         "value": [
             {
@@ -363,5 +249,236 @@
                 "Event": "new"
             }
         ]
-    }
+    },
+    "main": {
+        "value": [
+            {
+                "PartitionKey": "new",
+                "RowKey": "00008638382758461822",
+                "Timestamp": "2021-04-01T01:45:38.8115668Z",
+                "body": "Conch Concordance",
+                "color": "none",
+                "ident": "a9eeb17c-d2b2-4d2e-b759-d45c3da44a73",
+                "location": "{\"x\":\"709px\",\"y\":\"720px\"}",
+                "size": "{\"wd\":177,\"ht\":30}",
+                "uploaded": "2021-04-01T01:45:38Z"
+            },
+            {
+                "PartitionKey": "new",
+                "RowKey": "00008638382758472698",
+                "Timestamp": "2021-04-01T01:45:27.9348772Z",
+                "body": "Conch chord",
+                "color": "none",
+                "ident": "c9e134ed-f2b1-4db3-81b3-ab17aa6dbb8f",
+                "location": "{\"x\":\"709px\",\"y\":\"610.5px\"}",
+                "size": "{\"wd\":177,\"ht\":30}",
+                "uploaded": "2021-04-01T01:45:27Z"
+            },
+            {
+                "PartitionKey": "new",
+                "RowKey": "00008638382758480652",
+                "Timestamp": "2021-04-01T01:45:19.9782549Z",
+                "body": "Conch core",
+                "color": "none",
+                "ident": "ecb52f7c-352d-42c1-8f10-0879aeb9b721",
+                "location": "{\"x\":\"708.5px\",\"y\":\"499.5px\"}",
+                "size": "{\"wd\":177,\"ht\":30}",
+                "uploaded": "2021-04-01T01:45:19Z"
+            },
+            {
+                "PartitionKey": "new",
+                "RowKey": "00008638382758507082",
+                "Timestamp": "2021-04-01T01:44:55.5279759Z",
+                "body": "Conned, Corded, Data",
+                "color": "none",
+                "ident": "03636da2-e9b8-4975-b99b-b1831035fa46",
+                "location": "{\"x\":\"218px\",\"y\":\"395px\"}",
+                "size": "{\"wd\":177,\"ht\":30}",
+                "uploaded": "2021-04-01T01:44:54Z"
+            },
+            {
+                "PartitionKey": "new",
+                "RowKey": "00008638382758514793",
+                "Timestamp": "2021-04-01T01:44:57.1941523Z",
+                "body": "Conned, Corded",
+                "color": "none",
+                "ident": "a6ca0950-91ae-416f-96e2-e7ee5d6c8d5f",
+                "location": "{\"x\":\"215px\",\"y\":\"282.5px\"}",
+                "size": "{\"wd\":177,\"ht\":30}",
+                "uploaded": "2021-04-01T01:44:56Z"
+            },
+            {
+                "PartitionKey": "new",
+                "RowKey": "00008638382758523316",
+                "Timestamp": "2021-04-01T01:44:58.611153Z",
+                "body": "Conned Core",
+                "color": "none",
+                "ident": "820bf184-7b46-4269-8ea4-2a8b60c1ba2b",
+                "location": "{\"x\":\"215.5px\",\"y\":\"171.5px\"}",
+                "size": "{\"wd\":177,\"ht\":30}",
+                "uploaded": "2021-04-01T01:44:57Z"
+            },
+            {
+                "PartitionKey": "new",
+                "RowKey": "00008638382758530761",
+                "Timestamp": "2021-04-01T01:45:06.7649146Z",
+                "body": "Con Cor Date",
+                "color": "none",
+                "ident": "8c7c2149-6a2e-4ea0-85be-4046a8763567",
+                "location": "{\"x\":\"495px\",\"y\":\"396px\"}",
+                "size": "{\"wd\":177,\"ht\":30}",
+                "uploaded": "2021-04-01T01:45:06Z"
+            },
+            {
+                "PartitionKey": "new",
+                "RowKey": "00008638382758539134",
+                "Timestamp": "2021-04-01T01:45:04.6053902Z",
+                "body": "Concordat",
+                "color": "none",
+                "ident": "ce285fdb-79cc-45d1-af69-0594d3425c10",
+                "location": "{\"x\":\"496.5px\",\"y\":\"281px\"}",
+                "size": "{\"wd\":177,\"ht\":30}",
+                "uploaded": "2021-04-01T01:45:03Z"
+            },
+            {
+                "PartitionKey": "new",
+                "RowKey": "00008638382758546323",
+                "Timestamp": "2021-04-01T01:45:02.151653Z",
+                "body": "Concord",
+                "color": "none",
+                "ident": "da0cec10-4ca4-4e97-abd4-0f786c4ab3e9",
+                "location": "{\"x\":\"498px\",\"y\":\"172px\"}",
+                "size": "{\"wd\":177,\"ht\":30}",
+                "uploaded": "2021-04-01T01:45:01Z"
+            },
+            {
+                "PartitionKey": "new",
+                "RowKey": "00008638382759040778",
+                "Timestamp": "2021-04-01T01:36:09.5967846Z",
+                "body": "ytest",
+                "color": "none",
+                "ident": "9f2598f2-b930-49ce-b37b-9fde807245de",
+                "location": "{\"x\":\"948.5px\",\"y\":\"329px\"}",
+                "size": "{\"wd\":177,\"ht\":30}",
+                "uploaded": "2021-04-01T01:36:08Z"
+            }
+        ]
+    },
+    "timeseries": [
+        {
+            "RowKey": "00008638382759040729",
+            "Timestamp": "2021-04-01T01:35:59.8951349Z",
+            "UTS": 1617240959895,
+            "UTS_R": 1617240959900
+        },
+        {
+            "RowKey": "00008638382759032441",
+            "Timestamp": "2021-04-01T01:36:08.1851093Z",
+            "UTS": 1617240968185,
+            "UTS_R": 1617240968200
+        },
+        {
+            "RowKey": "00008638382759031691",
+            "Timestamp": "2021-04-01T01:36:08.9365615Z",
+            "UTS": 1617240968936,
+            "UTS_R": 1617240968900
+        },
+        {
+            "RowKey": "00008638382759030978",
+            "Timestamp": "2021-04-01T01:36:09.6491524Z",
+            "UTS": 1617240969649,
+            "UTS_R": 1617240969600
+        },
+        {
+            "RowKey": "00008638382758546267",
+            "Timestamp": "2021-04-01T01:44:14.366439Z",
+            "UTS": 1617241454366,
+            "UTS_R": 1617241454400
+        },
+        {
+            "RowKey": "00008638382758539082",
+            "Timestamp": "2021-04-01T01:44:21.5516055Z",
+            "UTS": 1617241461551,
+            "UTS_R": 1617241461600
+        },
+        {
+            "RowKey": "00008638382758530710",
+            "Timestamp": "2021-04-01T01:44:29.9255326Z",
+            "UTS": 1617241469925,
+            "UTS_R": 1617241469900
+        },
+        {
+            "RowKey": "00008638382758523256",
+            "Timestamp": "2021-04-01T01:44:37.3979142Z",
+            "UTS": 1617241477397,
+            "UTS_R": 1617241477400
+        },
+        {
+            "RowKey": "00008638382758514745",
+            "Timestamp": "2021-04-01T01:44:45.8839173Z",
+            "UTS": 1617241485883,
+            "UTS_R": 1617241485900
+        },
+        {
+            "RowKey": "00008638382758507030",
+            "Timestamp": "2021-04-01T01:44:53.6044169Z",
+            "UTS": 1617241493604,
+            "UTS_R": 1617241493600
+        },
+        {
+            "RowKey": "00008638382758505054",
+            "Timestamp": "2021-04-01T01:44:55.5788339Z",
+            "UTS": 1617241495578,
+            "UTS_R": 1617241495600
+        },
+        {
+            "RowKey": "00008638382758503389",
+            "Timestamp": "2021-04-01T01:44:57.2409819Z",
+            "UTS": 1617241497240,
+            "UTS_R": 1617241497200
+        },
+        {
+            "RowKey": "00008638382758501971",
+            "Timestamp": "2021-04-01T01:44:58.6600313Z",
+            "UTS": 1617241498660,
+            "UTS_R": 1617241498700
+        },
+        {
+            "RowKey": "00008638382758498432",
+            "Timestamp": "2021-04-01T01:45:02.1974783Z",
+            "UTS": 1617241502197,
+            "UTS_R": 1617241502200
+        },
+        {
+            "RowKey": "00008638382758495975",
+            "Timestamp": "2021-04-01T01:45:04.6603138Z",
+            "UTS": 1617241504660,
+            "UTS_R": 1617241504700
+        },
+        {
+            "RowKey": "00008638382758493812",
+            "Timestamp": "2021-04-01T01:45:06.8217408Z",
+            "UTS": 1617241506821,
+            "UTS_R": 1617241506800
+        },
+        {
+            "RowKey": "00008638382758480604",
+            "Timestamp": "2021-04-01T01:45:20.0272711Z",
+            "UTS": 1617241520027,
+            "UTS_R": 1617241520000
+        },
+        {
+            "RowKey": "00008638382758472649",
+            "Timestamp": "2021-04-01T01:45:27.98467Z",
+            "UTS": 1617241527984,
+            "UTS_R": 1617241528000
+        },
+        {
+            "RowKey": "00008638382758461770",
+            "Timestamp": "2021-04-01T01:45:38.8637099Z",
+            "UTS": 1617241538863,
+            "UTS_R": 1617241538900
+        }
+    ],
+    "duration": 578968
 }

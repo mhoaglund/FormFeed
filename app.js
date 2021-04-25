@@ -14,7 +14,7 @@ const config = require('config');
 const app_config = config.get('appconfig');
 
 //TODO complete this somehow with some keycode verification
-import passportCustom from 'passport-custom';
+var passportCustom = require('passport-custom');
 const CustomStrategy = passportCustom.Strategy;
  
 passport.use('strategy-name', new CustomStrategy(

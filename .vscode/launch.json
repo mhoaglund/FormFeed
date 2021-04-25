@@ -8,6 +8,7 @@
             "type": "node",
             "request": "launch",
             "name": "Launch Express App",
+            "console": "integratedTerminal",
             "skipFiles": [
                 "<node_internals>/**"
             ],

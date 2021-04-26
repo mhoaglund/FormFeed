@@ -12,12 +12,27 @@ function PlaybackController(options, timeseries){
     let _ms = 0;
     let _series = timeseries;
     let _rendered = [];
+    let _frame = 0;
+    let _started = 0;
+    let _elapsed = 0;
+    let _m_elapsed = 0;
+    let _original_start = 0;
+    let _timer;
 
     this.startplayback = function(){
         //start setinterval, calling iterate at options.rate
+        var myVar = setInterval(this.iterate, this.options.rate);
     }
-    this.iterate = function(_uts){
-        //where are we in time? look up deltas we need to be applying.
+    this.iterate = function(){
+        var _now = +new Date(); //millis basically
+        if(this._frame === 0){
+            _started = _now; //baselines
+            _original_start = timeseries.UTS;
+        }
+        _elapsed += (_now - _started);
+        _m_elapsed = _original_start + _elapsed; //current moment mapped to span of original timeseries
+
+        this._frame++;
     }
     this.pauseplayback = function(){
         //clear interval and update interal flags basically

@@ -25,6 +25,7 @@ module.exports.renderTimeSeries = function (_messageset, _cb){
                 _messageset.timeseries = results;
             });
             _messageset.duration = getDuration(_messageset.timeseries[0].Timestamp, _messageset.timeseries[_messageset.timeseries.length-1].Timestamp)
+            _messageset.segseries = getTimeSegmentMap(_messageset.timeseries, _messageset.duration, 2000);
             //TODO: add relative placement values according to total MS
           console.log('All deltas have been processed successfully');
         }
@@ -47,3 +48,27 @@ function getDuration(_start, _end){
     return diff;
 }
 
+//Hacky delta clustering
+function getTimeSegmentMap(_series, _duration, _segsize){
+    var _start = (Math.round(_series[0].UTS/_segsize)*_segsize) - _segsize; //adding a padding segment
+    var _ticker = 0;
+    var _segmented = {};
+    var _segmap = {};
+    //TODO refactor this so we make a segment map in advance, then launch a bunch of async stuff
+    while(_ticker <= (_duration + _segsize)) {
+        let _open = _start + _ticker;
+        let _close = _start + _ticker + _segsize;
+        //_segmented[_open] = 
+        _segmap[_open] = {'id':_open, 'open':_open, 'close':_close, 'members':[]};
+        _ticker = _ticker + _segsize;
+    }
+    _series.forEach(function(delta){
+        let bucket = (Math.round(delta.UTS/_segsize)*_segsize).toString();
+        if(_segmap[bucket]) _segmap[bucket].members.push(delta);
+    })
+    let _segarr = [];
+    Object.keys(_segmap).forEach(function(key){
+        _segarr.push(_segmap[key]);
+    })
+    return _segarr;
+}

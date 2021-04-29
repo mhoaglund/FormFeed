@@ -46,9 +46,9 @@ app.get('/renderall', (req, res) => {
             });
         }
     }, function(err, results) {
-        // results is now equals to: {one: 1, two: 2}
+        //We need deltas to have a dict representation too...
         masseuse.renderTimeSeries(results, function(series){
-            res.send(series);
+            res.send({series});
         })
     });
 })

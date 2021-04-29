@@ -3,6 +3,7 @@ var async = require('async');
 
 module.exports.renderTimeSeries = function (_messageset, _cb){
     var _ts = [];
+    var _events = {};
     //Build time and key dictionary
     async.each(_messageset.deltas.value, function(_delta, callback) {
         console.log('Processing delta ' + _delta.parentID + "::" + _delta.ident);
@@ -13,6 +14,7 @@ module.exports.renderTimeSeries = function (_messageset, _cb){
             "UTS": _uts,
             "UTS_R":Math.round(_uts/100)*100
         })
+        _events[_delta.RowKey] = _delta;
         callback();
     }, function(err) {
         if( err ) {
@@ -24,6 +26,7 @@ module.exports.renderTimeSeries = function (_messageset, _cb){
             }, function(err, results) {
                 _messageset.timeseries = results;
             });
+            _messageset.dict = _events;
             _messageset.duration = getDuration(_messageset.timeseries[0].Timestamp, _messageset.timeseries[_messageset.timeseries.length-1].Timestamp)
             _messageset.segseries = getTimeSegmentMap(_messageset.timeseries, _messageset.duration, 2000);
             //TODO: add relative placement values according to total MS

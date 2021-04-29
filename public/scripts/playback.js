@@ -4,15 +4,17 @@
 
 //Takes options, a collection of time segments dictating when events occur, and a collection of events.
 //TODO: durational event support!
+//TODO: milliseconds here are ten-thou not one-thou, I think. might need to look into how to sync that up.
 function PlaybackController(options, series, events){
     if(!events) return;
     let defaultoptions = {
         rate: 100
     }
-    options = { ...defaultoptions, ...options};
+    let _options = { ...defaultoptions, ...options};
     let _this = this;
     let _ms = 0;
-    let _series = timeseries;
+    let _series = series;
+    let _events = events;
     let _rendered = [];
     let _frame = 0;
     let _started = 0;
@@ -23,18 +25,21 @@ function PlaybackController(options, series, events){
 
     this.startplayback = function(){
         //start setinterval, calling iterate at options.rate
-        _timer = setInterval(this.iterate, this.options.rate);
+        _timer = setInterval(this.iterate, _options.rate);
     }
     this.iterate = function(){
         var _now = +new Date(); //millis basically
-        if(this._frame === 0){
+        //console.log(_now);
+        if(_frame === 0){
             _started = _now; //baselines
-            _original_start = timeseries.UTS;
+            _original_start = series[0].open;
         }
-        _elapsed += (_now - _started);
-        _m_elapsed = _original_start + _elapsed; //current moment mapped to span of original timeseries
+        _elapsed = (_now - _started);
+        _m_elapsed = _original_start + _elapsed; //where we are in the imported time series
         console.log('Iterated');
-        this._frame++;
+        console.log(_elapsed);
+        console.log(_m_elapsed);
+        _frame++;
     }
     this.pauseplayback = function(_reset = null){
         console.log('Stopping. Resetting?' + _reset ? ' Yes' : ' No');

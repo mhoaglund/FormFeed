@@ -30,9 +30,10 @@ app.get('/', (req, res) => {
 
 app.get('/renderall', (req, res) => {
     var topic = config.get('appconfig.homekey'); //the generic topic for 'home'
+    var segsize = (req.query.segmentsize) ? req.query.segmentsize : 2000;
     if(req.query.topic){
         topic = req.query.topic;
-    }// an example using an object instead of an array
+    }
     var delta_topic = config.get('appconfig.logkey') + "_" + topic;
     async.parallel({
         main: function(callback) {
@@ -47,7 +48,7 @@ app.get('/renderall', (req, res) => {
         }
     }, function(err, results) {
         //We need deltas to have a dict representation too...
-        masseuse.renderTimeSeries(results, function(series){
+        masseuse.renderTimeSeries(results, segsize, function(series){
             res.send({series});
         })
     });
